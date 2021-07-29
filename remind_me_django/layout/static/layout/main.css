@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;700;900&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+
+
+*{
+    box-sizing: border-box;
+    font-family: Roboto, Arial, Helvetica, sans-serif ;
+}
+
+
+body{
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+}
+
+.bg-wrapper{
+    background: #FAFAFA;
+    height: 100%;
+}
+
+.main-content{
+    max-width: 85vw;
+    margin: 0 auto;
+    margin-top: 80px;
+    color:rgb(126, 0, 0);
+}
+
+.article_1{
+    color: rgb(31, 31, 31);
+}
+
+.navbar{
+    display: grid;
+    background: rgb(248, 225, 108);
+    grid-template-columns: 20px 1.5fr 1fr 1fr 20px;
+    min-height: 100px;
+    color:rgb(29, 29, 29);
+    border-bottom: 1px rgba(29, 29, 29, 0.3) solid;
+}
+
+.logo{
+    grid-column: 2 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-family: Lato;
+    font-weight: 700;
+}
+
+.nav-ul{
+    grid-column: 4 / 5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+    margin-right: 15%;
+}
+
+.nav-ul li{
+    list-style-type: none;
+    margin: 0 2vw;
+    font-size: 23px;
+    font-family: Lato;
+}

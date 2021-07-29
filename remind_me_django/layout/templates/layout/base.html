@@ -1,0 +1,31 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'layout/main.css' %}" > 
+    {% if title %}
+        <title>RemindME - {{ title }}</title>
+    {% else %}
+        <title>RemindME - Home</title>
+    {% endif %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">REMIND ME WHEN</div>
+        <ul class="nav-ul">
+            <li class="li-item">HOME</li>
+            <li class="li-item">LOGIN</li>
+            <li class="li-item">SIGNUP</li>
+        </ul>
+    </nav>
+    <div class="bg-wrapper">
+        <section class="main-content">
+            {% block content %}{% endblock %}
+        </section>
+    </div>
+</body>
+</html>
