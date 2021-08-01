@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'account.apps.AccountConfig',
     'listings.apps.ListingsConfig',
     'layout.apps.LayoutConfig',
     'django.contrib.admin',
@@ -101,6 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Overwties the default user model with our mode instead.
+AUTH_USER_MODEL = 'account.Account'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
