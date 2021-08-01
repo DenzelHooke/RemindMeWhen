@@ -1,0 +1,136 @@
+:root{
+    --signTextColor: #fff;
+    --fadedBlack :#161616; 
+}
+
+
+
+
+.intro-wrapping{
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+}
+
+.heading{
+    font-size: 35px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.small-message{
+    margin-top: 50px;
+    font-size: 25px;
+    font-weight: 500;
+    color: rgb(151, 151, 151)
+}
+
+.small-message-p::before{
+    content: "";
+    width: 10px;
+    color: red;
+    height: 2px;
+}
+
+.btn-wrapper{
+    display: grid;
+    grid-template-columns: 70px 100px 70px;
+    grid-template-rows: 1fr 0.3fr 1fr;
+}
+
+/* yellow F8E16C
+    green 00C49A
+*/
+
+.register-btn{
+    background: #F8E16C;
+    grid-column: 1 / 4;
+    grid-row: 1 / 3;
+}
+
+.btn{
+    display: flex;
+    height: 100px;
+    font-size: 35px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.btn:visited{
+    text-decoration: none;
+}
+
+.sign-in-btn:visited{
+    color: var(--signTextColor);
+}
+
+.register-btn:visited{
+    color: var(--fadedBlack);
+}
+
+.register-btn:hover{
+    color: var(--signTextColor);
+}
+
+.sign-in-btn:hover{
+    color: var(--fadedBlack);
+}
+
+
+
+
+.blank-spacer{
+    background: #00C49A;
+}
+
+.sign-in-btn{
+    background: #00C49A;
+    grid-column: 1 / -1;
+    grid-row: 3 / 4;
+}
+
+
+@media screen and (min-width: 850px){
+    .heading{
+        font-size: 60px;
+    }
+
+    .btn-wrapper{
+        grid-template-columns: 1fr 20px 0.2fr 1fr;
+        grid-template-rows: 1fr;
+        box-shadow: 0px  8px 6px rgba(27, 27, 27, 0.452);
+        border-radius: 10px;
+    }
+
+    .btn{
+        grid-row: 1 / 2;
+        z-index: 1;
+        font-size: 55px;
+        padding: 20px;
+    }
+
+    .register-btn{
+        grid-column: 1 / 3;
+        display: flex;
+        justify-content: center;
+    }
+
+    .sign-in-btn{
+        grid-column: 4 / 5;
+        max-width: 300px;
+        width: 300px;
+        box-shadow: -6px  1px 4px rgba(27, 27, 27, 0.452);
+    }
+
+    .blank-spacer{
+        grid-column: 2 / 5;
+        grid-row: 1 / 2;
+        background: #F8E16C;
+        border-radius: 10px;
+        z-index: 0;
+    }
+
+}

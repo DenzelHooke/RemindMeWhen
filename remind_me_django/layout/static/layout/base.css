@@ -2,7 +2,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 
-
+/* BASE */
 
 *{
     box-sizing: border-box;
@@ -13,7 +13,7 @@
 body{
     padding: 0;
     margin: 0;
-    height: 100vh;
+    background: #FAFAFA;
 }
 
 .bg-wrapper{
@@ -25,7 +25,7 @@ body{
     max-width: 85vw;
     margin: 0 auto;
     margin-top: 80px;
-    color:rgb(126, 0, 0);
+    color:rgb(31, 31, 31);
 }
 
 .article_1{
@@ -35,7 +35,7 @@ body{
 .navbar{
     display: grid;
     background: rgb(248, 225, 108);
-    grid-template-columns: 20px 1.5fr 1fr 1fr 20px;
+    grid-template-columns: 20px 0.5fr 100px 0.5fr 20px;
     min-height: 100px;
     color:rgb(29, 29, 29);
     border-bottom: 1px rgba(29, 29, 29, 0.3) solid;
@@ -48,22 +48,46 @@ body{
     justify-content: center;
     font-size: 32px;
     font-family: Lato;
+    white-space: nowrap;
     font-weight: 700;
 }
 
-.nav-ul{
+.nav-ul{    
     grid-column: 4 / 5;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
     padding: 0;
     margin: 0;
-    margin-right: 15%;
 }
 
 .nav-ul li{
+    flex-basis: 10px;
     list-style-type: none;
-    margin: 0 2vw;
     font-size: 23px;
     font-family: Lato;
+    margin-left: 8%;
+}   
+
+.nav-ul a{
+    text-decoration: none;
+    white-space: nowrap;
 }
+
+.nav-ul a:visited{
+    color:rgb(29, 29, 29);
+}
+
+.nav-ul a:hover{
+    color:rgb(179, 179, 179);
+}
+
+@media screen and (max-width: 850px){
+    .nav-ul{
+        display: none;
+    }
+}
+
+/* BASE */
+
+

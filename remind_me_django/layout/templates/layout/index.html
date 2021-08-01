@@ -1,12 +1,26 @@
 {% extends "layout/base.html" %}
+{% load static %}
 
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'layout/index.css' %}">   
+{% endblock %}
 
 {% block content %}
-    <article class="article_1">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. At obcaecati pariatur reprehenderit ipsum cupiditate nesciunt alias nostrum unde, dignissimos possimus, dolorum minus aliquam aut sint maxime. Quae voluptates consequatur placeat?
-        Ipsam provident cupiditate sit delectus cumque non sunt eum. Velit incidunt et cum dicta quae reprehenderit labore, doloremque suscipit nostrum autem corrupti blanditiis deserunt ex? Illum quis assumenda sit itaque?
-        Sint laudantium fuga eum asperiores nulla modi aliquam beatae pariatur, unde maiores consequuntur tempora ea ipsam nesciunt itaque quibusdam, accusantium, provident magnam mollitia voluptas neque officia. Blanditiis aliquam fugit temporibus.
-        Magnam eligendi eveniet beatae illo officia earum corrupti sed dolor iste laudantium, porro a dignissimos facilis ea sapiente accusantium, asperiores quos reprehenderit cumque natus provident distinctio. Odio porro facere atque.
-        Cum facilis autem eius rerum nisi, sapiente laboriosam perspiciatis ipsum ipsa soluta hic maiores optio numquam, voluptate vero excepturi eum sint! Facere vero, libero repellendus sint labore ipsum illo exercitationem?
+    <article class="intro-wrapping">
+        <div class="heading-wrapper">
+            <p class="heading">NEVER MISS ANOTHER <br class="heading-br"> PRODUCT RE-STOCK AGAIN</p>
+        </div>
+        <div class="small-message">
+            <p class="small-message-p">click register to get started</p>
+        </div>
+        <div class="btn-wrapper">
+            <a href="#" class="register-btn btn"> 
+                REGISTER
+            </a>
+            <div class="blank-spacer"></div>
+            <a href="#" class="sign-in-btn btn">
+                LOG IN
+            </a>
+        </div>
     </article>
 {% endblock %}
