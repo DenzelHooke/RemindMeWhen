@@ -102,8 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Overwties the default user model with our mode instead.
-AUTH_USER_MODEL = 'account.Account'
+# Overwrites the default user model with our custom model instead.
+AUTH_USER_MODEL = 'account.CustomUser'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/

@@ -4,60 +4,69 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 # https://docs.djangoproject.com/en/3.2/ref/models/fields/
 
 
-class MyAccountManager(BaseUserManager):
-    
+class CustomUserManager(BaseUserManager):
     def create_user(self, email, password=None):
+        """
+        Creates and saves a User with the given email, date of
+        birth and password.
+        """
+
         if not email:
             raise ValueError("Users must have an email address")
-        
-        user = self.model(
-            email=self.normalize_email(email),
-        )
+
+        user = self.model(email=self.normalize_email(email))
 
         user.set_password(password)
         user.save(using=self._db)
+        print("--user created--")
+
         return user
+    
+    def create_superuser(self, email, password=None):
+        """
+        Creates and saves a superuser with the given email, date of
+        birth and password.
+        """
 
-    def create_superuser(self, email, password):
-        user = self.create_user(
-            email=self.normalize_email(email),
-            password=password
-        )
+        user = self.create_user(email, password=password)
 
-        user.is_active = True
         user.is_admin = True
-        user.is_staff = True
-        user.is_superuser = True
-
         user.save(using=self._db)
+        print("--superuser created--")
+
         return user
-          
 
-class Account(AbstractBaseUser):
-    email = models.EmailField(verbose_name="email", max_length=100, unique=True)
 
-    # Required fields
-    date_joined = models.DateTimeField(verbose_name="date_joined", auto_now_add=True)
-    last_login = models.DateTimeField(verbose_name="last_login", auto_now=True)
-    is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+
+
+
+
+
+
+class CustomUser(AbstractBaseUser):
+    email = models.EmailField(verbose_name='email', max_length=80,  unique=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
-    objects = MyAccountManager()
+
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    date_joined = models.DateField(auto_now_add=True)
+    
+    
+    objects = CustomUserManager()
 
     def __str__(self):
-        return self.email 
+        return self.email
 
-    # Required
-
-    # Has perms if admin
     def has_perm(self, perm, obj=None):
-        return self.is_admin
+        return True
 
     def has_module_perms(self, app_label):
+        "Does the user have permissions to view the app `app_label`?"
         return True
+
+    @property
+    def is_staff(self): 
+        return self.is_admin
 
