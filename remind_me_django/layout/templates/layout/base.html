@@ -19,11 +19,17 @@
 <body>
     <nav class="navbar">
         <div class="logo">REMIND ME WHEN</div>
-        <ul class="nav-ul">
-            <li class="li-item"><a href="{% url 'home-page' %}">HOME</a></li>
-            <li class="li-item"><a href="#">LOGIN</a></li>
-            <li class="li-item"><a href="{% url 'register-page' %}">SIGN UP</a></li>
-        </ul>
+        {% if user.is_authenticated %}
+            <ul class="nav-ul">
+                <li class="li-item"><a href="{% url 'logout-page' %}">Logout</a></li>
+            </ul>
+        {% else %}
+            <ul class="nav-ul">
+                <li class="li-item"><a href="{% url 'home-page' %}">HOME</a></li>
+                <li class="li-item"><a href="{% url 'login-page' %}">LOGIN</a></li>
+                <li class="li-item"><a href="{% url 'register-page' %}">SIGN UP</a></li>
+            </ul>
+        {% endif %}
     </nav>
     <section class="main-content">
         {% if messages %}

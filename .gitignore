@@ -1,2 +1,3 @@
 remindmeVenv/
 remind_me_django/db.sqlite3
+remind_me_django/.env
