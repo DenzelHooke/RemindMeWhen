@@ -6,6 +6,7 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
 from account.models import CustomUser
+from listings.models import Product
 
 
 
@@ -22,10 +23,11 @@ class UserCreationForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
+        # Enter the required fields for your custom user
         fields = ('email',)
     
     def clean_password2(self):
-        # checks that both passwords entries are equal
+        # checks that both passwords entries are equal on the form
 
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
@@ -57,7 +59,7 @@ class UserChangeForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ('email', 'password', 'is_active', 'is_admin')
+        fields = ('email', 'password', 'is_admin',)
     
 
 class UserAdmin(BaseUserAdmin):
@@ -69,30 +71,41 @@ class UserAdmin(BaseUserAdmin):
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
 
-    list_display = ('email', 'is_admin')
+    # List display holds the field names of the fields that we want 
+    # to display on our admin account page of our users.
+    list_display = ('email',)
+
+    # List filter choses what filter options to display on the filter panel on the right hand side of the admin page.
     list_filter = ('is_admin',)
     fieldsets = (
-        (None, {'fields': ('email', 'password')}),
-        ('Permissions', {'fields': ('is_admin',)}),
-    )
+        ('User Info', {'fields': ('email', 'password',)}),
+        ('Permissions', {'fields': ('is_admin',)})
+        )
 
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
       
 
-    # Used to define the fields that will be displayed on the create user page
+    # add_fieldsets is used to define the fields that will be displayed on the create user page
+
+    # The classes key sets any custom CSS classes we want ot apply on our form section.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2'),
+            'fields': ('email', 'password1', 'password2',)
         }),
+        ('Permissions', {'fields': ('is_admin', 'is_superuser',)})
     )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
 
+class ListingsAdmin:
+    pass
+
+
 admin.site.register(CustomUser, UserAdmin)
-admin.site.unregister(Group)
+
     
     
 

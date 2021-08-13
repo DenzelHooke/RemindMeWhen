@@ -4,12 +4,14 @@ from django.conf import settings
 # Create your models here.
 
 class Product(models.Model):
-    url = models.URLField(max_length=2000)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, blank=True)
     price = models.FloatField()
     stock = models.BooleanField()
-    quantity = models.CharField(max_length=30)
-    # on user account deletion, delete all of their product listings. 
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    url = models.URLField(max_length=2000)
+    quantity = models.CharField(max_length=30, null=True)
+
+    def __str__(self):
+        return self.url
 
 
-#62294
