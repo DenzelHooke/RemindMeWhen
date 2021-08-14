@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 
 from pathlib import Path
 from decouple import config
@@ -134,6 +135,12 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'home-page'
-
+LOGIN_REDIRECT_URL = 'profile-page'
 LOGIN_URL = 'login-required'
+
+# Location on filesystem where django creates our 'upload_to' folder 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
+
+# Location where our images are looked for   
+MEDIA_URL = '/media_files/'
+

@@ -1,0 +1,11 @@
+{% extends "layout/base.html" %}
+
+{% block content %}
+    <div class=" main-content">
+        <h3 class="border-bottom mb-4">Welcome to your home away from home {{ user.get_name }}</h3>
+        <img class="rounded-circle" src="{{ user.profile.image.url }}" alt="*Profile Image*" width="50" height="50">
+        <div class="media-body">
+            <p class="text-secondary">{{ user.email }}</p>
+        </div>
+    </div>
+{% endblock %}

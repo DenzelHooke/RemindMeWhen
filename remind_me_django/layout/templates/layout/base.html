@@ -21,7 +21,8 @@
         <div class="logo">REMIND ME WHEN</div>
         {% if user.is_authenticated %}
             <ul class="nav-ul">
-                <li class="li-item"><a href="{% url 'logout-page' %}">Logout</a></li>
+                <li class="li-item"><a href="{% url 'home-page' %}">HOME</a></li>
+                <li class="li-item"><a href="{% url 'logout-page' %}">LOGOUT</a></li>
             </ul>
         {% else %}
             <ul class="nav-ul">

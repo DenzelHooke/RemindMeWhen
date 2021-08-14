@@ -14,7 +14,7 @@ def register(request):
             form.save()
             email = form.cleaned_data.get('email')
             messages.success(request, f"Account created for '{email}'")
-            return redirect('home-page')
+            return redirect('login-page')
     else:
         form = UserCreationForm()
     title = 'Register'

@@ -5,9 +5,9 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.core.exceptions import ValidationError
 
-from account.models import CustomUser
+from .models import CustomUser
 from listings.models import Product
-
+from .models import Profile
 
 
 # Register your models here.
@@ -105,6 +105,8 @@ class ListingsAdmin:
 
 
 admin.site.register(CustomUser, UserAdmin)
+
+admin.site.register(Profile)
 
     
     

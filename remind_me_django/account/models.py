@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.conf import settings
 
 # https://docs.djangoproject.com/en/3.2/ref/models/fields/
 
@@ -67,8 +68,21 @@ class CustomUser(AbstractBaseUser):
     def has_module_perms(self, app_label):
         "Does the user have permissions to view the app `app_label`?"
         return True
+    
+    def get_name(self):
+        return self.email.split('@')[0]
 
     @property
     def is_staff(self): 
         return self.is_admin
+        
 
+
+class Profile(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="profile")
+    image = models.ImageField(default="default.jpg", upload_to='profile_pics')
+    bio = models.TextField(blank=True)
+
+
+    def __str__(self):
+        return self.user.email.split("@")[0]
