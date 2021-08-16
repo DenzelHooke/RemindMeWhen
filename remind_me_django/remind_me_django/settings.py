@@ -138,9 +138,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'profile-page'
 LOGIN_URL = 'login-required'
 
-# Location on filesystem where django creates our 'upload_to' folder 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media_files')
+# Location on filesystem where our upload_to
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-# Location where our images are looked for   
-MEDIA_URL = '/media_files/'
+# MEDIA_ROOT = "C:/Users/Denze/Projects/remindMe/remind_me_django/media/"
+
+# How we access our images through the browser so /media/profile_pics/ etc.  
+MEDIA_URL = '/media/'
 

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.conf import settings
+from PIL import Image
 
 # https://docs.djangoproject.com/en/3.2/ref/models/fields/
 
@@ -85,4 +86,22 @@ class Profile(models.Model):
 
 
     def __str__(self):
-        return self.user.email.split("@")[0]
+        return f"{self.user.email.split('@')[0]}'s Profile"
+
+    #  runs each time a form saves.
+    def save(self, *args, **kwargs):
+        # Runs the default save method from our parent class
+        super().save(*args, **kwargs)
+        
+        # Opens the image of the current instance of this profile
+        
+        img = Image.open(self.image.path)
+
+        # If image height or width > 300
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            # resize image to 300px
+            img.thumbnail(output_size)
+            # save and overwrite to the same image location
+            img.save(self.image.path)
+            
