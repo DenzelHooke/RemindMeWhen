@@ -2,6 +2,7 @@ from django import forms
 from .models import CustomUser, Profile
 
 class UserUpdateForm(forms.ModelForm):
+    # Not needed, but without it, our email field form won't check for email validation.
     email = forms.EmailField()
 
     class Meta:

@@ -4,8 +4,8 @@ from django.conf import settings
 # Create your models here.
 
 class Product(models.Model):
-    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="product")
+    name = models.CharField(max_length=50, blank=True)
     price = models.FloatField()
     stock = models.BooleanField()
     url = models.URLField(max_length=2000)

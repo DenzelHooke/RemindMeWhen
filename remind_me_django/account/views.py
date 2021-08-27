@@ -23,7 +23,7 @@ def register(request):
 
 # Message Types
 
-# messages.debug
+        # messages.debug
 # messages.info
 # messages.warning
 # messages.success

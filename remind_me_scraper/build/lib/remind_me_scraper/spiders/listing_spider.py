@@ -20,7 +20,7 @@ from account.models import CustomUser
 
 class ListingsSpider(scrapy.Spider):
     def __init__(self, user_instance, URL, optional_product_name=None, *args, **kwargs):
-        self.user_instance = CustomUser.objects.filter(email=user_instance).first()
+        self.user_instance = user_instance
         print(self.user_instance)
         self.optional_product_name = optional_product_name
         self.URL = URL

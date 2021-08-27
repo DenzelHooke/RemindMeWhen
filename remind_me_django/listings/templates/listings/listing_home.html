@@ -1,0 +1,21 @@
+{% extends "layout/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="content-section">
+    {% if products %}
+        {% for product in products %}
+            <div class="product_listing">
+                <p>{{ product.name }}</p>
+                <p>{{ product.stock}}</p>
+                <p>{{ product.price}}</p>
+                <p>{{ product.url }}</p>
+                <br>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>You have no products that are currently being tracked..</h3>
+        <small class="text-muted"><a href="{% url 'listing-add-page' %}">Click here to track a product</a></small>
+    {% endif %}
+</div>
+{% endblock %}
