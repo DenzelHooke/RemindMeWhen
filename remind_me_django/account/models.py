@@ -67,7 +67,7 @@ class CustomUser(AbstractBaseUser):
         return True
 
     def has_module_perms(self, app_label):
-        "Does the user have permissions to view the app `app_label`?"
+        """Does the user have permissions to view the app `app_label`?"""
         return True
     
     def get_name(self):

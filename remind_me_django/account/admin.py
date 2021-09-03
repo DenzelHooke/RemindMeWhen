@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from .models import CustomUser
 from listings.models import Product
 from .models import Profile
-
+from django.forms import ModelForm, TextInput, EmailInput
 
 # Register your models here.
 
@@ -18,8 +18,9 @@ class UserCreationForm(forms.ModelForm):
     fields, plus a repeated password.
     """
 
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'placeholder':'', 'class': 'input-field',}))
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput(attrs={'placeholder':'', 'class': 'input-field',}))
+    email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'placeholder':'', 'class': 'input-field',}))
 
     class Meta:
         model = CustomUser
@@ -49,7 +50,7 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    """
+    """`
     A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's
     disabled password hash display field.
@@ -67,16 +68,16 @@ class UserAdmin(BaseUserAdmin):
     form = UserChangeForm
     add_form = UserCreationForm
 
-    # The fields to be used in displaying the User model.
-    # These override the definitions on the base UserAdmin
-    # that reference specific fields on auth.User.
-
     # List display holds the field names of the fields that we want 
     # to display on our admin account page of our users.
     list_display = ('email',)
 
     # List filter choses what filter options to display on the filter panel on the right hand side of the admin page.
     list_filter = ('is_admin',)
+
+    # The fields to be used in displaying the User model.
+    # These override the definitions on the base UserAdmin
+    # that reference specific fields on auth.User.
     fieldsets = (
         ('User Info', {'fields': ('email', 'password',)}),
         ('Permissions', {'fields': ('is_admin',)})
@@ -100,13 +101,21 @@ class UserAdmin(BaseUserAdmin):
     ordering = ('email',)
     filter_horizontal = ()
 
-class ListingsAdmin:
-    pass
+class ListingsAdmin(admin.ModelAdmin):
+
+    list_display = ('author','name', 'price', 'date_added',)
+
+    list_filter = ('author',)
+
+    search_fields = ('author',)
+    ordering = ('author',)
+    filter_horizontal = ()
 
 
 admin.site.register(CustomUser, UserAdmin)
 
 admin.site.register(Profile)
+admin.site.register(Product, ListingsAdmin)
 
     
     

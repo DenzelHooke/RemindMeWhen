@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from account import views as account
-from listings import views as listings
+from listings import views as listings  
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('layout.urls')),
     path('register/', account.register, name="register-page"),
-    path('login/', auth_views.LoginView.as_view(template_name="account/login.html"), name="login-page"),
+    path('login/', account.UserLoginView.as_view(template_name="account/login.html"), name="login-page"),
     path('logout/', auth_views.LogoutView.as_view(template_name="account/logout.html"), name="logout-page"),
     path('profile/', account.profile, name="profile-page"),
     path('listings/', include('listings.urls')),

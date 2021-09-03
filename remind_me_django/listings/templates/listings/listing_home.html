@@ -1,16 +1,16 @@
-{% extends "layout/base.html" %}
-{% load crispy_forms_tags %}
+{% extends "layout/base.html" %}    
+
 
 {% block content %}
 <div class="content-section">
     {% if products %}
         {% for product in products %}
             <div class="product_listing">
-                <p>{{ product.name }}</p>
-                <p>{{ product.stock}}</p>
-                <p>{{ product.price}}</p>
-                <p>{{ product.url }}</p>
-                <br>
+                <ul>
+                    <li>{{ product.name }}</li>
+                    <li>Added on {{ product.date_added }}</li>
+                    <li> ${{ product.price }} CAD</li>
+                </ul>
             </div>
         {% endfor %}
     {% else %}

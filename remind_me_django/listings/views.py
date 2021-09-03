@@ -22,7 +22,16 @@ from scraper_code import SpiderRunner
 # kwargs Any extra parameters you would like to pass to the spiders constructor/init method.
 
 
-def scrapyd_run(request, product, *args, **kwargs):
+def scrapyd_run(request, product):
+    """scrapyd_run 
+    A function that takes a request and a product object and spawns
+    a scrapyd process which runs a crawl on the specified URL passed from the Product object.
+
+    Args:
+        request ([object]): [Request object passed from a Django view.]
+        product ([object]): [Product model object returned from a form's form.save(commit=False)]
+    """
+
     scrapyd = ScrapydAPI('http://localhost:8080')
     scrapyd.schedule(
         project="remind_me_scraper", 
@@ -31,10 +40,13 @@ def scrapyd_run(request, product, *args, **kwargs):
         optional_product_name=product.name, 
         URL=product.url)
 
-# Problem may be something with user_instance returning a string? or request.user returning string?
-# Problem may be something with user_instance returning a string? or request.user returning string?
 @login_required
 def listing_add(request):
+    """ 
+    Creates a form for adding a product to track.
+    Once form is valid, the product object is returned(not saved into DB) and
+    the scrapyd_run is called and passed both request and product objects.
+    """
     context = {}
     if request.method == "POST":
         product_form = ProductCreationForm(request.POST)
@@ -43,6 +55,8 @@ def listing_add(request):
             # returns an instance of Product
             product = product_form.save(commit=False)   
             """ SpiderRunner(spider=ListingsSpider).scrape(user_instance=request.user, optional_product_name=product.name, URL=product.url) """
+
+            # Runs the code that spawns a scrapyd process.
             scrapyd_run(request, product)
 
     else:
@@ -53,6 +67,11 @@ def listing_add(request):
 
 
 class ProductListView(ListView):
-    model = Product
+    # model = Product
     template_name="listings/listing_home.html"
     context_object_name = "products"
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Product.objects.filter(author_id=user.id)
+        return queryset

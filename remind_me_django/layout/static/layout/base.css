@@ -4,25 +4,52 @@
 
 /* BASE */
 
+:root{
+    
+    --navbar_bg: rgb(51, 51, 51);
+    --nav_text: rgb(224, 224, 224);
+
+    --text_placeholder_color: rgb(206, 206, 206);
+    --input_border_color: rgba(0, 0, 0, 0.411);
+    --input_bg: rgba(59, 59, 59, 0.87);
+    --card_bg: rgb(70, 70, 70);
+
+    --body_bg: rgb(202, 202, 202);
+    --general_text: rgb(255, 255, 255);
+    --heading_text_color: rgb(255, 255, 255);
+
+    --button_font_color: rgb(255, 255, 255);
+    --button_bg: rgb(30, 119, 236);
+    --button_bg_hover: rgb(64, 137, 233);
+    --btn_font_size: 1.4rem;
+    --btn_border_radius: 4px;
+
+    --helper_text_color: rgb(218, 218, 218);
+    --error_bg: rgb(223, 65, 65);
+        
+}
+
+
 *{
-    box-sizing: border-box;
+    box-sizing:  border-box;
     font-family: Roboto, Arial, Helvetica, sans-serif ;
 }
+
+
 
 
 body{
     padding: 0;
     margin: 0;
-    background: #FAFAFA;
+    background: var(--body_bg);
 }
 
 .bg-wrapper{
-    background: #FAFAFA;
     height: 100%;
 }
 
 .main-content{
-    max-width: 85vw;
+    max-width: 90vw;
     margin: 0 auto;
     margin-top: 80px;
     color:rgb(31, 31, 31);
@@ -33,18 +60,17 @@ body{
 }
 
 .navbar{
-    display: grid;
-    background: rgb(248, 225, 108);
+    display: grid;  
+    background: var(--navbar_bg);
     grid-template-columns: 20px 0.5fr 100px 0.5fr 20px;
-    min-height: 100px;
-    color:rgb(29, 29, 29);
-    border-bottom: 1px rgba(29, 29, 29, 0.3) solid;
+    min-height: 60px;
+    color: var(--nav_text);
+    border-bottom: 1px rgba(24, 24, 24, 0.89) solid;
 }
 
 .logo{
     grid-column: 2 / 3;
     display: flex;
-    align-items: center;
     justify-content: center;
     font-size: 32px;
     font-family: Lato;
@@ -72,17 +98,111 @@ body{
 .nav-ul a{
     text-decoration: none;
     white-space: nowrap;
+    color: var(--nav_text);
 }
 
 .nav-ul a:visited{
-    color:rgb(29, 29, 29);
+    color: var(--nav_text);
 }
 
 .nav-ul a:hover{
     color:rgb(179, 179, 179);
 }
 
-@media screen and (max-width: 850px){
+.form-section{
+    width: 450px;
+    background: var(--card_bg);
+    padding: 50px;
+    border-radius: 4px;
+}
+#id_password,
+#id_username,
+.input-field{
+    color: var(--text_placeholder_color);
+    background: var(--input_bg);
+    width: 100%;
+    line-height: 2.8rem;
+    border: 0px solid var(--input_border_color);
+    border-radius: 3px;
+    padding: 0 1rem;
+}
+
+.form-label{
+    color: var(--general_text);
+}
+
+.field-container{
+    display: flex;
+    flex-direction: column;
+    margin: 1rem 0;
+    gap: 7px;
+}
+
+.field-container-error input{
+    color: rgb(212, 65, 65);
+}
+
+.button{
+    background: none;
+    border: none;
+    width: min(80%, 250px);
+    height: 3rem;
+    border-radius: var(--btn_border_radius);
+    color: var(--button_font_color);
+    font-size: var(--btn_font_size);
+    transition: background 200ms ease-in-out;
+}
+
+.button:hover{
+    background: var(--button_bg_hover);
+}
+
+.btn-group{
+    width: 100%;
+    display: flex;
+    justify-content: center;    
+}
+
+.button-signup{
+    margin-top: 20px;
+    font-size: var(--btn_font_size);
+    background: var(--button_bg);
+}
+
+.heading_text{
+    font-size: 1.8rem;
+    color: var(--heading_text_color);
+}
+
+.info_text{
+    color: var(--helper_text_color);
+}
+
+.errorlist{
+    color: var(--general_text);
+    list-style-type: none;
+    padding: 3px;
+    margin: 0;
+}
+
+.errorlist li{
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 3px;
+    background: var(--error_bg);
+}
+
+/* Get's rid of yellow autofill and text color background for input fields in Firefox */
+input {
+    filter: none;
+}
+
+.form-wrap{
+    display: flex;
+    justify-content: center;
+}
+
+@media screen and (max-width: 750px){
     .nav-ul{
         display: none;
     }

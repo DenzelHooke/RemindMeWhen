@@ -1,5 +1,10 @@
 {% extends "layout/base.html" %}
 {% load crispy_forms_tags %}
+{% load widget_tweaks %}
+
+{% block styles %}
+<link src=href>
+{% endblock %}
 
 {% block content %}
 <div class="content-section">
@@ -11,7 +16,12 @@
             {% csrf_token  %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-5">Add a new Amazon product to track</legend>
-                {{ form | crispy }}
+                {% for field in form.visible_fields %}
+                    <div class="field-container">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
             </fieldset>
             <div class="form-group">
                 <button class="btn btn-outline-info" type="submit">Track</button>

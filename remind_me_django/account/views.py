@@ -3,7 +3,8 @@ from account.admin import UserCreationForm
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm
-
+from django.contrib.auth import views as auth_views
+import account.forms as account_forms
 
 # Create your views here.
 def register(request):
@@ -67,4 +68,7 @@ def profile(request):
 
 def forbidden_space(request):
     return render(request, "account/login_required.html")
+
+class UserLoginView(auth_views.LoginView):
+    form_class = account_forms.UserAuthForm
 

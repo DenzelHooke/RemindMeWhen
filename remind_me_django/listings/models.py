@@ -10,8 +10,13 @@ class Product(models.Model):
     stock = models.BooleanField()
     url = models.URLField(max_length=2000)
     quantity = models.CharField(max_length=30, blank=True, default="None")
+    date_added = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["date_added"]
 
     def __str__(self):
-        return self.url 
+        return f"{self.url[:40]}.." 
 
 

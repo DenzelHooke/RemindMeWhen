@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -135,7 +136,10 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Redirect user to this view once they login
 LOGIN_REDIRECT_URL = 'profile-page'
+
+# Redirect user to this view if they try to access a page and aren't logged in 
 LOGIN_URL = 'login-required'
 
 # Location on filesystem where our upload_to

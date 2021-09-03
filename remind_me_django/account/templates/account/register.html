@@ -1,24 +1,44 @@
 {% extends "layout/base.html" %}
-{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'account/forms.css' %}"> 
+{% endblock %}
 
 {% block content %}
-    <div class="content-section">
-        <form method="POST">
-            {% csrf_token  %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-5">Sign up below to get started</legend>
-                {{ form | crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit"> Sign Up</button>
-            </div>
-            
-            <div class="border-top pt-4 mt-5">
-                <small class="text-muted">
-                    Already have an account?
-                    <a href="{% url 'home-page' %}" class="ml-3">Login here</a>
-                </small>
-            </div>
-        </form>
+
+    <div class="form-wrap">
+        <div class="form-section">
+            <form method="POST">
+                {% csrf_token  %}
+                <fieldset class="form-group">
+                    <legend class="mb-2 heading_text">Create account</legend>
+                    <small class="info_text">
+                        Already have an account?
+                        <a href="{% url 'login-page' %}" class="ml-3">Login here</a>
+                    </small>
+                    {% for field in form.visible_fields %}
+                        {% if field.errors %}
+                            <div class="field-container field-container-error">
+                                <label class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                            {% else %}
+                            <div class="field-container">
+                                <label class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                        <div class="field_error">
+                            {{ field.errors }}
+                        </div>
+                    {% endfor %}
+                </fieldset>
+                <div class="btn-group">
+                    <button class="button button-signup" type="submit">Continue</button>
+                </div>
+            </form>
+        </div>
     </div>
-    {% endblock %}
+{% endblock %}
