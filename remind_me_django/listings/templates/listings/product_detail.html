@@ -1,0 +1,20 @@
+{% extends "layout/base.html" %}    
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'listings/listing_home.css' %}"> 
+{% endblock %}
+
+
+{% block content %}
+    <li id="product-listing" class="card-1">
+        <ul id="product-ul">
+            <div class="product-options">
+                <li id="inner-card-name" class="inner-card-li">{{ product.name }}</li>
+                <li id="inner-card-added-on" class="inner-card-li">Added on: {{ product.date_added }}</li>
+                <li id="inner-card-price" class="inner-card-li"> ${{ product.price }} CAD</li>
+            </div>
+        </ul>
+        <button class="btn btn-danger btn-delete" type="submit">X</button>
+    </li>
+{% endblock %}

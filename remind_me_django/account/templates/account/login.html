@@ -25,7 +25,7 @@
                             </div>
                         {% else %}
                             <div class="field-container">
-                                <label class="form-label">{{ field.label }}</label>
+                                <label class="form-label-light bold">{{ field.label }}</label>
                                 {{ field }}
                             </div>
                         {% endif %}
@@ -35,8 +35,9 @@
                     {% endfor %}
                 </fieldset>
                 <div class="btn-group">
-                    <button class="button button-signup" type="submit">Continue</button>
+                    <button class="button button-signup mb-4" type="submit">Continue</button>
                 </div>
+                <small><a class="text-muted" href="{% url 'password-reset-page' %}">Forgot password</a></small>
             </form>
         </div>
     </div>

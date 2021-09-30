@@ -8,7 +8,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'layout/base.css' %}"> 
-    {% block styles %}{% endblock %}
+    {% if sidebar %}
+        <link rel="stylesheet" type="text/css" href="{% static 'layout/sidebar.css' %}">
+    {% endif %} 
+    {% block styles %}
+    {% endblock %}
     {% if title %}
         <title>RemindME  |  {{ title }}</title>
     {% else %}
@@ -20,28 +24,75 @@
         <div class="logo">REMIND ME WHEN</div>
         {% if user.is_authenticated %}
             <ul class="nav-ul">
-                <li class="li-item"><a href="{% url 'home-page' %}">HOME</a></li>
-                <li class="li-item"><a href="{% url 'logout-page' %}">LOGOUT</a></li>
+                <li class="li-item"><a class="link" href="{% url 'home-page' %}">HOME</a></li>
+                <li class="li-item"><a class="link" href="{% url 'logout-page' %}">LOGOUT</a></li>
             </ul>
         {% else %}
             <ul class="nav-ul">
-                <li class="li-item"><a href="{% url 'home-page' %}">HOME</a></li>
-                <li class="li-item"><a href="{% url 'login-page' %}">LOGIN</a></li>
-                <li class="li-item"><a href="{% url 'register-page' %}">SIGN UP</a></li>
+                <li class="li-item"><a class="link" href="{% url 'home-page' %}">HOME</a></li>
+                <li class="li-item"><a class="link" href="{% url 'login-page' %}">LOGIN</a></li>
+                <li class="li-item"><a class="link" href="{% url 'register-page' %}">SIGN UP</a></li>
             </ul>
         {% endif %}
     </nav>
-    <section class="main-content">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-        {% block content %}{% endblock %}
-    </section>
 
+    {% if messages %}
+        {% for message in messages %}
+            <!-- BS has the same style names as our django success flash messages such as "alert-success" for example. -->
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <section class="main-content">
+        <!-- Displays sidebar if 'sidebar':True in context. -->
+        {% if sidebar %}
+            <div class="sidebar-outside-wrapper">
+                <nav class="sidebar-inner-wrapper">   
+                    <ul class="sidebar-options">
+                        <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'profile-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/user_svg_test.svg" %}'>Profile</a></li>
+                        <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'listing-add-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/pen_paper.svg" %}'>Add listings</a></li>
+                        <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'listing-home-page' %}"><img   id='listings-svg' class='sidebar-li-svg' src='{% static "layout/listings_paper.svg" %}'>Listings</a></li>
+                    </ul>
+                </nav>
+                <div class="sidebar-content-wrapper">
+                    {% block sidebar_content %}
+                    {% endblock %}
+                </div>
+            </div>
+        {% else %}
+            {% block content %}
+            {% endblock %}
+            <div class="pagination-wrapper">
+                {% if is_paginated %}
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item"><a class="link" href="?page=1">First</a></li>
+                            <li class="page-item"><a class="link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                        {% endif %}
+        
+                        {% for page_num in page_obj.paginator.page_range %}
+                            {% if page_num == page_obj.number %}
+                                <li class="page-item"><a class="link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                            {% elif page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'+3' %}
+                                <li class="page-item"><a class="link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                            
+                        {% if page_obj.has_next %}
+                            <li class="page-item"><a class="link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                            <li class="page-item"><a class="link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                            <h2>dd</h2>
+                        {% endif %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+    <footer class="footer-wrapper">
+        
+    </footer>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

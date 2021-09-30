@@ -6,7 +6,6 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class UserUpdateForm(forms.ModelForm):
-    # Not needed, but without it, our email field form won't check for email validation.
     email_label = 'Email'
     
     email = forms.EmailField(label=email_label, 
@@ -29,7 +28,7 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = ['image', 'bio']
 
         widgets = {
-            'bio': Textarea(attrs={'placeholder':'Enter something ominous..', 'class':'input-field'}),
+            'bio': Textarea(attrs={'placeholder':'Enter something ominous..', 'class':'input-field bio-field', 'maxlength': 50})
         }
 
 class UserAuthForm(AuthenticationForm):
@@ -39,5 +38,5 @@ class UserAuthForm(AuthenticationForm):
     password = forms.CharField(
         label=_("Password"),
         strip=False,
-        widget=forms.PasswordInput(attrs={'placeholder': '', 'autocomplete': 'current-password'}),
+        widget=forms.PasswordInput(attrs={'placeholder': '', 'autocomplete': 'current-password', 'class':'input-field'}),
     )

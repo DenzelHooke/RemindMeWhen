@@ -31,7 +31,7 @@ def user_shorten_str(string):
 
 
 class ProductLoader(ItemLoader):
-
+    
     default_output_processor = TakeFirst()
     
     name_in = MapCompose(remove_tags, clean_ws, shorten_str)

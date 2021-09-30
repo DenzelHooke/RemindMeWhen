@@ -1,21 +1,58 @@
 {% extends "layout/base.html" %}    
+{% load static %}
 
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'listings/listing_home.css' %}"> 
+{% endblock %}
 
-{% block content %}
-<div class="content-section">
-    {% if products %}
-        {% for product in products %}
-            <div class="product_listing">
-                <ul>
-                    <li>{{ product.name }}</li>
-                    <li>Added on {{ product.date_added }}</li>
-                    <li> ${{ product.price }} CAD</li>
+{% block sidebar_content %}
+
+    <ul class="product-container">
+        {% if object_list %}
+            {% for product in object_list %}
+                <li id="product-listing" class="card-1">
+                    <ul id="product-ul">
+                        <div class="product-options">
+                            <li id="inner-card-name" class="inner-card-li"><a href="">{{ product.name }}</a></li>
+                            <li id="inner-card-price" class="inner-card-li"> ${{ product.price }} CAD</li>
+                            <li id="inner-card-added-on" class="inner-card-li">Added on {{ product.date_added }}</li>
+                        </div>
+                    </ul>
+
+                    <form method="POST" action="{% url 'listing-delete' product.id %}">
+                        {% csrf_token %}
+                        <button class="btn btn-danger btn-delete" type="submit">X</button>
+                    </form>
+                </li>
+            {% endfor %}
+        
+        {% else %}
+            <h3>You have no products that are currently being tracked..</h3>
+            <small class="text-muted"><a href="{% url 'listing-add-page' %}">Click here to track a product</a></small>
+        {% endif %}
+        <div class="pagination-wrapper">
+            {% if is_paginated %}
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item"><a class="link" href="?page=1">First</a></li>
+                        <li class="page-item"><a class="link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+                    {% endif %}
+    
+                    {% for page_num in page_obj.paginator.page_range %}
+                        {% if page_num == page_obj.number %}
+                            <li class="page-item"><a class="link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% elif page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'+3' %}
+                            <li class="page-item"><a class="link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                        
+                    {% if page_obj.has_next %}
+                        <li class="page-item"><a class="link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="link" href="?page={{ page_obj.paginator.num_pages }}">Last</a></li>
+                    {% endif %}
                 </ul>
-            </div>
-        {% endfor %}
-    {% else %}
-        <h3>You have no products that are currently being tracked..</h3>
-        <small class="text-muted"><a href="{% url 'listing-add-page' %}">Click here to track a product</a></small>
-    {% endif %}
-</div>
+            {% endif %}
+        </div>
+    </ul>
+        
 {% endblock %}

@@ -1,24 +1,20 @@
 {% extends "layout/base.html" %}
-{% load crispy_forms_tags %}
-{% load widget_tweaks %}
+{% load static %}
+
 
 {% block styles %}
-<link src=href>
+    <link rel="stylesheet" type="text/css" href="{% static 'listings/listing_landing.css' %}"> 
 {% endblock %}
 
-{% block content %}
-<div class="content-section">
-    {% if data %}
-        <h2>{{ data.name }}</h2>
-        <h2>{{ data.url }}</h2>
-    {% else %}
-        <form method="POST">
+{% block sidebar_content %}
+    <div class="content-section listing-form-card">
+        <form class='card-1' method="POST">
             {% csrf_token  %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-5">Add a new Amazon product to track</legend>
                 {% for field in form.visible_fields %}
                     <div class="field-container">
-                        <label class="form-label">{{ field.label }}</label>
+                        <label class="form-label-dark bold">{{ field.label }}</label>
                         {{ field }}
                     </div>
                 {% endfor %}
@@ -26,8 +22,6 @@
             <div class="form-group">
                 <button class="btn btn-outline-info" type="submit">Track</button>
             </div>
-            
         </form>
-    {% endif %}
-</div>
+    </div>
 {% endblock %}

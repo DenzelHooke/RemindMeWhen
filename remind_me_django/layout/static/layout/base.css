@@ -14,11 +14,13 @@
     --input_bg: rgba(59, 59, 59, 0.87);
     --card_bg: rgb(70, 70, 70);
 
-    --body_bg: rgb(202, 202, 202);
+    --body_bg: rgb(245, 245, 245);
     --general_text: rgb(255, 255, 255);
-    --heading_text_color: rgb(255, 255, 255);
+    --light_heading_text_color: rgb(255, 255, 255);
+    --dark_heading_text_color: rgb(56, 56, 56);
 
     --button_font_color: rgb(255, 255, 255);
+    --button_font_black: rgb(34, 34, 34);
     --button_bg: rgb(30, 119, 236);
     --button_bg_hover: rgb(64, 137, 233);
     --btn_font_size: 1.4rem;
@@ -32,7 +34,8 @@
 
 *{
     box-sizing:  border-box;
-    font-family: Roboto, Arial, Helvetica, sans-serif ;
+    font-family: Roboto, sans-serif, Arial, Helvetica;
+    font-weight: 400;
 }
 
 
@@ -95,17 +98,20 @@ body{
     margin-left: 8%;
 }   
 
-.nav-ul a{
-    text-decoration: none;
+.link{
     white-space: nowrap;
+}
+
+.nav-ul a{
     color: var(--nav_text);
 }
 
-.nav-ul a:visited{
+.link:visited{
     color: var(--nav_text);
 }
 
-.nav-ul a:hover{
+.link:hover{
+    text-decoration: none;
     color:rgb(179, 179, 179);
 }
 
@@ -115,6 +121,7 @@ body{
     padding: 50px;
     border-radius: 4px;
 }
+
 #id_password,
 #id_username,
 .input-field{
@@ -127,8 +134,16 @@ body{
     padding: 0 1rem;
 }
 
-.form-label{
-    color: var(--general_text);
+.form-label-light{
+    color: var(--light_heading_text_color);
+}
+
+.form-label-dark{
+    color: var(--dark_heading_text_color);
+}
+
+.bold{
+    font-weight: bold;
 }
 
 .field-container{
@@ -145,12 +160,11 @@ body{
 .button{
     background: none;
     border: none;
-    width: min(80%, 250px);
-    height: 3rem;
     border-radius: var(--btn_border_radius);
     color: var(--button_font_color);
     font-size: var(--btn_font_size);
     transition: background 200ms ease-in-out;
+    padding: 10px;
 }
 
 .button:hover{
@@ -171,7 +185,7 @@ body{
 
 .heading_text{
     font-size: 1.8rem;
-    color: var(--heading_text_color);
+    color: var(--light_heading_text_color);
 }
 
 .info_text{
@@ -190,6 +204,7 @@ body{
     margin-bottom: 15px;
     border-radius: 3px;
     background: var(--error_bg);
+    text-align: center;     
 }
 
 /* Get's rid of yellow autofill and text color background for input fields in Firefox */
@@ -208,6 +223,52 @@ input {
     }
 }
 
+.grid{
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-auto-rows: minmax(400px, auto);
+    gap: 20px
+}
+
+.grid-auto{
+    display: grid;
+    grid-auto-columns: 1fr;
+}
+
+.grid-row-2-4{
+    grid-template-rows: repeat(2, 400px);
+    grid-template-areas: 
+        "top-1 top-2"
+        "bottom-1 botom-2";
+}
+
+.card-1{
+    padding: 20px;
+    box-shadow: 0 5px 10px 0px rgba(0, 0, 0, 0.466);
+    border-radius: 6px;
+}
+
+.sidebar-content-wrapper {
+    display: flex;
+    height: 100%;
+    flex-basis: 100%;
+    justify-content: center;
+}
+
+.pagination-wrapper {
+    display: flex;
+    margin-top: auto;
+    padding: 30px 0;
+    margin-bottom: 15px;
+    height: 70px;
+    
+    justify-content: center;
+    color:var(--light_heading_text_color);
+}
+
+.pagination-wrapper ul li {
+    margin-left: 10px;
+}
 /* BASE */
 
 

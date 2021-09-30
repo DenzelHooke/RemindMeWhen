@@ -31,11 +31,11 @@ def user_shorten_str(string):
 
 
 class ProductLoader(ItemLoader):
-
+    
     default_output_processor = TakeFirst()
     
     name_in = MapCompose(remove_tags, clean_ws, shorten_str)
-    url_in = MapCompose(remove_tags)
-    price_in = MapCompose(remove_tags, replace_char, str_to_float)
+    url_in = MapCompose(remove_tags, clean_ws)
+    price_in = MapCompose(remove_tags, clean_ws, replace_char, str_to_float)
 
  

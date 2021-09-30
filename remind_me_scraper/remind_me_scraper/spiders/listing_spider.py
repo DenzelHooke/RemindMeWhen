@@ -19,9 +19,12 @@ from account.models import CustomUser
 
 
 class ListingsSpider(scrapy.Spider):
+
     def __init__(self, user_instance, URL, optional_product_name=None, *args, **kwargs):
         self.user_instance = CustomUser.objects.filter(email=user_instance).first()
-        print(self.user_instance)
+        print(f"DEBUG: {self.user_instance}")
+
+        # User input
         self.optional_product_name = optional_product_name
         self.URL = URL
 
@@ -41,8 +44,11 @@ class ListingsSpider(scrapy.Spider):
         else:
             loader.add_css("name", "span#productTitle")
             
-        loader.add_value("url", response.url)
-        loader.add_css("price", "span#priceblock_ourprice")
+        loader.add_value("url", self.URL)
+        
+        price = page.css("div #priceInsideBuyBox_feature_div div span:nth-child(1)").get()
+        loader.add_value("price", price)
+
         if page.css("div #availability span.a-size-medium a-color-success"):
             loader.add_value("stock", True)
         else:

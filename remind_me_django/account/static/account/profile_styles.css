@@ -1,0 +1,71 @@
+/* Gave this a display:flexbox so both elements can be "inline" with each other. (rows)*/
+
+.profile-info{
+    padding: 45px;
+    margin: 0 auto;
+    flex-basis: 1200px;
+}
+
+/* Bio input field */
+#id_bio{
+    max-width: 50rem;
+    max-height: 200px;
+}
+
+.profile-forms{
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.profile-forms .form-group:last-child{
+    display: flex;
+    justify-content: center;
+}
+
+.profile-forms .form-group:last-child button{
+    background: var(--navbar_bg);
+    color: var(--button_font_color);
+    border: none;
+    transition: all 500ms ease-in-out;
+    transition: width 500ms ease-in-out;
+    
+}
+
+.profile-forms .form-group:last-child button:hover{
+    background: var(--button_bg);
+    border: none;
+    width: 150px;
+}
+
+.profile-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 400px auto;
+    gap: 10px
+}
+
+.media-wrap{
+    display: flex;
+    max-width: 80%;
+    margin: 0 auto;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.media-wrap img{
+    margin: 15px auto;
+    object-fit: cover;
+    width: 100%;
+    height: 200px;
+}
+
+.media-wrap p{
+    margin: 10px 0;
+    text-align: center;
+    overflow: auto;
+}
+
+.media-wrap p:nth-child(2){
+    font-size: 26px;
+    font-weight: bold;
+}

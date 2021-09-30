@@ -6,6 +6,7 @@ from .forms import UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import views as auth_views
 import account.forms as account_forms
 
+
 # Create your views here.
 def register(request):
 
@@ -19,6 +20,7 @@ def register(request):
             return redirect('login-page')
     else:
         form = UserCreationForm()
+        print(request.headers)
     title = 'Register'
     return render(request, 'account/register.html', {'form': form, 'title': title})
 
@@ -60,7 +62,7 @@ def profile(request):
         profileForm = ProfileUpdateForm(instance=request.user.profile)
         
 
-    context = {'user_form': userForm, 'profile_form': profileForm}
+    context = {'user_form': userForm, 'profile_form': profileForm, 'sidebar': True}
 
     return render(request, "account/profile.html", context=context)
 
@@ -71,4 +73,3 @@ def forbidden_space(request):
 
 class UserLoginView(auth_views.LoginView):
     form_class = account_forms.UserAuthForm
-

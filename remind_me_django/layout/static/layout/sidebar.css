@@ -1,0 +1,61 @@
+:root{
+    --sidebar_width: 280px;
+    --profile-sidebar-link_color: rgb(34, 34, 34);
+    --profile-sidebar-link_hover: rgb(243, 0, 0);
+    --sidebar-li-hover: rgb(153, 153, 153);
+    --sidebar_bg: rgb(245, 245, 245);
+}
+
+.main-content{
+    margin: 0;
+    max-width: 100%;
+}
+
+.sidebar-outside-wrapper{
+    display: flex;
+}
+
+.sidebar-inner-wrapper{
+    min-width: var(--sidebar_width);
+    background: var(--sidebar_bg);
+    position: sticky;
+    top: 0;
+    /* I can't remember why I added the align-self property. It seems to have zero effect. */
+    align-self: flex-start;
+    height: calc(100vh - 65.1px);
+    border-right: 1px solid rgb(224, 224, 224);
+}
+
+.sidebar-options{
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    padding-top: 80px;
+}
+
+.sidebar-li{
+    text-align: left;
+    font-size: 22px;
+}
+
+.profile-sidebar-link{
+    padding: 10px;
+    display: block;
+    color: var(--profile-sidebar-link_color);
+    transition: background 0.2s;
+}
+
+.profile-sidebar-link:hover{
+    background: var(--sidebar-li-hover);
+}
+
+.profile-sidebar-link:visited{
+    color: var(--profile-sidebar-link_color);
+}
+
+.sidebar-li-svg{
+    margin-right: 10px;                                                                                                          
+    width:30px; 
+    height: 30px;
+}
