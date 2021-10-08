@@ -1,0 +1,69 @@
+2021-10-08 05:14:22 [scrapy.utils.log] INFO: Scrapy 2.5.1 started (bot: remind_me_scraper)
+2021-10-08 05:14:22 [scrapy.utils.log] INFO: Versions: lxml 4.6.3.0, libxml2 2.9.10, cssselect 1.1.0, parsel 1.6.0, w3lib 1.22.0, Twisted 21.7.0, Python 3.9.7 (default, Sep 28 2021, 18:32:58) - [GCC 10.2.1 20210110], pyOpenSSL 21.0.0 (OpenSSL 1.1.1l  24 Aug 2021), cryptography 35.0.0, Platform Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-glibc2.31
+2021-10-08 05:14:22 [scrapy.utils.log] DEBUG: Using reactor: twisted.internet.epollreactor.EPollReactor
+2021-10-08 05:14:22 [scrapy.crawler] INFO: Overridden settings:
+{'BOT_NAME': 'remind_me_scraper',
+ 'LOG_FILE': 'logs/remind_me_scraper/listings_spider/965698f027f611ecb5240242ac120002.log',
+ 'NEWSPIDER_MODULE': 'remind_me_scraper.spiders',
+ 'SPIDER_MODULES': ['remind_me_scraper.spiders']}
+2021-10-08 05:14:22 [scrapy.extensions.telnet] INFO: Telnet Password: b624fbc4de339a86
+2021-10-08 05:14:22 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats']
+2021-10-08 05:14:22 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2021-10-08 05:14:22 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2021-10-08 05:14:22 [scrapy.middleware] INFO: Enabled item pipelines:
+['remind_me_scraper.pipelines.RemindMeScraperPipeline']
+2021-10-08 05:14:22 [scrapy.core.engine] INFO: Spider opened
+2021-10-08 05:14:22 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2021-10-08 05:14:22 [scrapy.extensions.telnet] INFO: Telnet console listening on 127.0.0.1:6023
+2021-10-08 05:14:24 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://www.amazon.ca/Kitchenaid-KP26M9XCCU-6-Quart-Bowl-Lift-Professional/dp/B06XVN2HVX/?_encoding=UTF8&smid=A3DWYIK6Y9EEQB&pf_rd_p=07d73eaf-255e-403b-aca3-8748b47eb205&pd_rd_wg=5hvKA&pf_rd_r=SHXKAJGX48EMHYPYHDJ8&pd_rd_w=59wjT&pd_rd_r=27dd2a04-0f96-44e1-8587-724c7a7de6cd&ref_=pd_gw_unk> (referer: None)
+2021-10-08 05:14:24 [scrapy.core.scraper] DEBUG: Scraped from <200 https://www.amazon.ca/Kitchenaid-KP26M9XCCU-6-Quart-Bowl-Lift-Professional/dp/B06XVN2HVX/?_encoding=UTF8&smid=A3DWYIK6Y9EEQB&pf_rd_p=07d73eaf-255e-403b-aca3-8748b47eb205&pd_rd_wg=5hvKA&pf_rd_r=SHXKAJGX48EMHYPYHDJ8&pd_rd_w=59wjT&pd_rd_r=27dd2a04-0f96-44e1-8587-724c7a7de6cd&ref_=pd_gw_unk>
+{'name': 'KitchenAid 6-qt 590 W Bowl Lift Mixer (Contour Sil',
+ 'price': 499.0,
+ 'stock': False,
+ 'url': 'https://www.amazon.ca/Kitchenaid-KP26M9XCCU-6-Quart-Bowl-Lift-Professional/dp/B06XVN2HVX/?_encoding=UTF8&smid=A3DWYIK6Y9EEQB&pf_rd_p=07d73eaf-255e-403b-aca3-8748b47eb205&pd_rd_wg=5hvKA&pf_rd_r=SHXKAJGX48EMHYPYHDJ8&pd_rd_w=59wjT&pd_rd_r=27dd2a04-0f96-44e1-8587-724c7a7de6cd&ref_=pd_gw_unk',
+ 'user_email': 'denzelhooke@hotmail.com'}
+2021-10-08 05:14:24 [scrapy.core.engine] INFO: Closing spider (finished)
+2021-10-08 05:14:24 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 553,
+ 'downloader/request_count': 1,
+ 'downloader/request_method_count/GET': 1,
+ 'downloader/response_bytes': 313514,
+ 'downloader/response_count': 1,
+ 'downloader/response_status_count/200': 1,
+ 'elapsed_time_seconds': 2.488107,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2021, 10, 8, 5, 14, 24, 707962),
+ 'httpcompression/response_bytes': 1751919,
+ 'httpcompression/response_count': 1,
+ 'item_scraped_count': 1,
+ 'log_count/DEBUG': 2,
+ 'log_count/INFO': 10,
+ 'memusage/max': 65888256,
+ 'memusage/startup': 65888256,
+ 'response_received_count': 1,
+ 'scheduler/dequeued': 1,
+ 'scheduler/dequeued/memory': 1,
+ 'scheduler/enqueued': 1,
+ 'scheduler/enqueued/memory': 1,
+ 'start_time': datetime.datetime(2021, 10, 8, 5, 14, 22, 219855)}
+2021-10-08 05:14:24 [scrapy.core.engine] INFO: Spider closed (finished)

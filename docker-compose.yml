@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  web:
+    build: .\web
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .\web:/usr/src/remindme_web
+    ports: 
+      - 8000:8000
+
+  scrapy:
+    build: .\scraper
+    command: scrapyd
+    volumes:
+      - .\scraper\:/usr/src/remindme_scraper/
+    ports: 
+      - 8080:8080
+    
+      
