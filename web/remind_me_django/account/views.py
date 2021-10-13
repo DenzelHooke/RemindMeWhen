@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import views as auth_views
 import account.forms as account_forms
+from account.tasks import update_item
 
 
 # Create your views here.
@@ -36,6 +37,7 @@ def register(request):
 
 @login_required
 def profile(request):
+    update_item.delay(request.user.email)
     
     if request.method == "POST":
             # request.POST sends our post data to the form

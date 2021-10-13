@@ -15,5 +15,5 @@ class RemindMeScraperPipeline:
     def process_item(self, item, spider):
         # Item = model instance
         # Connect to DB and save object in DB.
-        print(item)
+        item.save()
         return item

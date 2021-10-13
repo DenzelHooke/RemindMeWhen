@@ -18,7 +18,7 @@ class Product(models.Model):
         ordering = ["date_added"]
 
     def __str__(self):
-        return f"{self.url[:40]}.." 
+        return f"{self.url}" 
 
     def get_absolute_url(self):
         # Reverse returns the full URL path to the specified url path name.

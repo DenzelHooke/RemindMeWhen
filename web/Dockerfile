@@ -7,6 +7,7 @@ WORKDIR /usr/src/remindme_web
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
+RUN pip install psycopg2-binary
 
 WORKDIR /usr/src/remindme_web/remind_me_django
 

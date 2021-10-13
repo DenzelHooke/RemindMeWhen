@@ -13,8 +13,42 @@ services:
     build: .\scraper
     command: scrapyd
     volumes:
-      - .\scraper\:/usr/src/remindme_scraper/
+      - .\scraper\:/usr/src/scraper/
     ports: 
       - 8080:8080
+    depends_on:
+      - web
+
+  celery-worker:
+    build: .\default\python\
+    command: celery -A remind_me_django worker --without-heartbeat --without-gossip --without-mingle 
+    volumes:
+      - .\web\remind_me_django\:/usr/src/app/
+    depends_on:
+      - web
+      - scrapy
+    
+  celery-worker:
+    build: .\default\python\
+    command: celery -A remind_me_django worker --without-heartbeat --without-gossip --without-mingle 
+    volumes:
+      - .\web\remind_me_django\:/usr/src/app/
+    depends_on:
+      - web
+      - scrapy
+
+  celery-beat:
+    build: .\default\python\
+    command: celery -A remind_me_django beat
+    volumes:
+      - .\web\remind_me_django\:/usr/src/app/
+    depends_on:
+      - celery-worker
+
+
+    
+  
+
+
     
       
