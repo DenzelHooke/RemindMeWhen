@@ -8,6 +8,7 @@ WORKDIR /usr/src/scraper
 
 COPY ./scraper/remind_me_scraper/scrapd.conf /etc/scrapyd/
 
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 

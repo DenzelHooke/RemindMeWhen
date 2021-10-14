@@ -1,7 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
-
+from django.utils import timezone
 # Create your models here.
 
 class Product(models.Model):
@@ -13,6 +13,7 @@ class Product(models.Model):
     quantity = models.CharField(max_length=30, blank=True, default="None")
     date_added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
+    last_checked = models.DateTimeField(default=timezone.now())
 
     class Meta:
         ordering = ["date_added"]
