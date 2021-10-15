@@ -2,7 +2,8 @@ FROM python:3.9
 
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/
+
 
 COPY requirements.txt .
 

@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /etc/scrapyd/
 
+
 WORKDIR /usr/src/scraper
 
 COPY ./scraper/remind_me_scraper/scrapd.conf /etc/scrapyd/
