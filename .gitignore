@@ -2,3 +2,4 @@ venv/
 web/remind_me_django/db.sqlite3
 *.env
 .vscode/
+

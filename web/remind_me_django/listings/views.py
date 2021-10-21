@@ -6,30 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, DeleteView
 from .models import Product
 from .forms import ProductCreationForm
-from remind_me_django.task_funcs import ScraperUtils
-
-def wait_till_finished(job_id, scrapyd, project):
-    """Blocks until scrapyd.job_status returns 'finished'. 
-    Once 'finished' is received, the function stops blocking.
-
-    Args:
-        job_id ([type]): [description]
-        scrapyd ([type]): [description]
-        project ([type]): [description]
-    """
-    while True:
-        job_status = scrapyd.job_status(project, job_id)
-
-        if job_status != "finished":
-            print(f"Job status: {job_status}")
-            while True:
-                time.sleep(1)
-                if job_status != scrapyd.job_status(project, job_id):
-                    break
-        else:
-            print(f"--Job status: {job_status}!--")
-            break
-
+from remind_me_django.task_funcs import ScraperUtilz
 
 @login_required
 def listing_add(request):
@@ -48,8 +25,8 @@ def listing_add(request):
             product_instance = product_form.save(commit=False)
 
             # Runs the code that spawns a scrapyd process.
-            job_id, scrapyd, project = ScraperUtils().scrapyd_first_run(request, product_instance)
-            wait_till_finished(job_id, scrapyd, project)
+            ScraperUtilz().scrapyd_first_run(request, product_instance)
+            ScraperUtilz().wait_till_finished(1)
             
             newest_listing = Product.objects.filter(author=user).latest('date_added')
             print(newest_listing.name)

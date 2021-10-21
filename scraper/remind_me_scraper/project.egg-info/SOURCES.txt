@@ -9,7 +9,6 @@ remind_me_scraper/item_loaders.py
 remind_me_scraper/items.py
 remind_me_scraper/middlewares.py
 remind_me_scraper/pipelines.py
-remind_me_scraper/scraper_code.py
 remind_me_scraper/settings.py
 remind_me_scraper/spiders/__init__.py
 remind_me_scraper/spiders/listing_spider.py

@@ -1,5 +1,5 @@
 import os
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt
 import pytz
 
 import django
@@ -7,11 +7,10 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
 django.setup()
 
 from listings.models import Product
-from listings.views import scrapyd_run
 from celery import Celery
-from .task_funcs import ScraperUtils
+from .task_funcs import ScraperUtilz
 
-
+scrapyd_api = 'http://scrapy:8080'
 
 app = Celery('remind_me_django')
 
@@ -40,9 +39,23 @@ def check_for_updates():
     for product in all_products:
         diff = utc_now - product.last_updated
         product.last_checked = utc_now
-        if diff.total_minutes() >= 30:
-            scraper = ScraperUtils()
+        if diff.total_seconds() / 60 >= 30:
+            print(f'db_periodic_checker: Product: {product.name[:20]}.. To be updated.\nLast checked: {diff.total_seconds() / 60} minutes ago')
+
+            print(product.url)
+            scraper = ScraperUtilz(scrapyd_api)
             scraper.scrapyd_update_run(product.author, product)
+            scraper.wait_till_finished(1)
+
+            # Store scrapped data in Redis with a uuid as a JSON str
+            # Pull down data with that specified uuid
+            # Compare prices with curent prices in databse
+            # if differrent, save old price in a var, update db with new dtaa and send an email showing the price comparisons.
+            # Create a class for this
+
+            print(f'db_periodic_checker: Product: {product.name[:20]}.. updated')
+        else:
+            print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
         
                  
         
