@@ -8,9 +8,13 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+RUN pip install git+https://github.com/scrapy/scrapyd-client.git
+
+
 WORKDIR /usr/src/remindme_scraper/remind_me_scraper
 
 COPY . .
+
 
 RUN ["apt-get", "update"]
 RUN ["apt-get", "install", "-y", "vim-tiny"]

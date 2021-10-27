@@ -1,5 +1,6 @@
 import sys
 sys.path.append("remindme_scraper/remind_me_scraper")
+# find a better way for production ^^
 
 import scrapy
 from ..items import ProductItem
@@ -12,13 +13,14 @@ from ..item_loaders import ProductLoader
 
 class ListingsSpider(scrapy.Spider):
 
-    def __init__(self, user_email, URL, optional_product_name=None, *args, **kwargs):
+    def __init__(self, user_email, URL, optional_product_name=None, uuid=None, *args, **kwargs):
         self.user_email = user_email
         print(f"DEBUG: {self.user_email}")
 
         # User input
         self.optional_product_name = optional_product_name
         self.URL = URL
+        self.uuid = uuid
 
     name = "listings_spider"
     user_agent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
@@ -41,13 +43,16 @@ class ListingsSpider(scrapy.Spider):
         price = page.css("div #priceInsideBuyBox_feature_div div span:nth-child(1)").get()
         loader.add_value("price", price)
 
+        # TODO:
+        # Figure out why stock always returns False
         if page.css("div #availability span.a-size-medium a-color-success"):
-            loader.add_value("stock", True)
+            loader.add_value("stock", 1)
         else:
-            loader.add_value("stock", False)
+            loader.add_value("stock", 0)
         
         loader.add_value("user_email", self.user_email)
-
+        loader.add_value("uuid", self.uuid)
+        
         yield loader.load_item()
         
 

@@ -13,7 +13,7 @@ class Product(models.Model):
     quantity = models.CharField(max_length=30, blank=True, default="None")
     date_added = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
-    last_checked = models.DateTimeField(default=timezone.now())
+    last_checked = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ["date_added"]

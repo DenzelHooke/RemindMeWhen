@@ -21,7 +21,7 @@ def register(request):
             return redirect('login-page')
     else:
         form = UserCreationForm()
-        print(request.headers)
+        
     title = 'Register'
     return render(request, 'account/register.html', {'form': form, 'title': title})
 
@@ -37,8 +37,6 @@ def register(request):
 
 @login_required
 def profile(request):
-    update_item.delay(request.user.email)
-    
     if request.method == "POST":
             # request.POST sends our post data to the form
             # instance tells the form which instance of that model to update
@@ -54,7 +52,8 @@ def profile(request):
 
             shorthand_name = request.user.get_name()
             messages.success(request, f"Your account has been updated, {shorthand_name}")
-            # redirect ends the post/get request pattern which happens when you try to refresh the page after sending a post request and you get thta pop up hta says you'll resend form information if you refresh. 
+            # redirect ends the post/get request cycle which happens when you try to refresh 
+            # the page after sending a post request.
             return redirect('profile-page')
 
 

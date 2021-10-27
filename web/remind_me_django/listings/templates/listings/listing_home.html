@@ -13,7 +13,7 @@
                 <li id="product-listing" class="card-1">
                     <ul id="product-ul">
                         <div class="product-options">
-                            <li id="inner-card-name" class="inner-card-li"><a href="">{{ product.name }}</a></li>
+                            <li id="inner-card-name" class="inner-card-li"><a href={{ product.url }}>{{ product.name }}</a></li>
                             <li id="inner-card-price" class="inner-card-li"> ${{ product.price }} CAD</li>
                             <li id="inner-card-added-on" class="inner-card-li">Added on {{ product.date_added }}</li>
                         </div>

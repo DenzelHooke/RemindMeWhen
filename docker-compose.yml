@@ -8,15 +8,19 @@ services:
       - .\web:/usr/src/remindme_web
     ports: 
       - 8000:8000
+    depends_on:
+      - redis
 
   scrapy:
     build: .\scraper
     command: scrapyd
     volumes:
       - .\scraper\:/usr/src/scraper/
+      - .\scraper\etc\scrapyd\:/etc/scrapyd
     ports: 
       - 8080:8080
     depends_on:
+      - redis
       - web
     
   celery-worker:
@@ -25,6 +29,7 @@ services:
     volumes:
       - .\web\remind_me_django\:/usr/src/app/
     depends_on:
+      - redis
       - web
       - scrapy
 
@@ -34,7 +39,15 @@ services:
     volumes:
       - .\web\remind_me_django\:/usr/src/app/
     depends_on:
+      - redis
       - celery-worker
+
+  redis:
+    image: redis:6.2.6-bullseye
+    ports:
+      - 8083:6379
+    
+    
 
 
     

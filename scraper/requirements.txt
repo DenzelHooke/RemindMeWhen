@@ -15,3 +15,4 @@ scrapyd-client==1.2.0a1
 virtualenv==20.8.1
 Scrapy==2.5.0
 redis==3.5.3 
+pytz==2021.3

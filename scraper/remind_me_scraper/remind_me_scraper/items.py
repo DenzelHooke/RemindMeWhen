@@ -13,4 +13,5 @@ class ProductItem(Item):
     stock = Field()
     url = Field()
     quantity = Field()
+    uuid = Field()
 

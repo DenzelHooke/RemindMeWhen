@@ -1,5 +1,7 @@
 import time
 
+import json
+import redis
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -7,6 +9,12 @@ from django.views.generic import ListView, DetailView, DeleteView
 from .models import Product
 from .forms import ProductCreationForm
 from remind_me_django.task_funcs import ScraperUtilz
+
+
+
+
+r = redis.Redis(host='redis', port=6379, db=0)
+
 
 @login_required
 def listing_add(request):
@@ -25,9 +33,21 @@ def listing_add(request):
             product_instance = product_form.save(commit=False)
 
             # Runs the code that spawns a scrapyd process.
-            ScraperUtilz().scrapyd_first_run(request, product_instance)
-            ScraperUtilz().wait_till_finished(1)
-            
+            scraper = ScraperUtilz()
+            scraper.scrapyd_first_run(request, product_instance)
+            scraper.wait_till_finished(1)
+
+            prod = r.get(scraper.uuid)
+            print(f'prod: {prod}')
+            prod = json.loads(prod)
+            Product.objects.create(
+                author=user,
+                name=prod['name'],
+                price=prod['price'],
+                stock=prod['stock'],
+                url=prod['url']
+            )
+
             newest_listing = Product.objects.filter(author=user).latest('date_added')
             print(newest_listing.name)
 
