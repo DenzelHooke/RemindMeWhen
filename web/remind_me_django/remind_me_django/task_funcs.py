@@ -1,7 +1,6 @@
 import time
 from uuid import uuid4
 
-from listings.models import Product
 from scrapyd_api import ScrapydAPI
 
 

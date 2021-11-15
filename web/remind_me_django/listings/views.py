@@ -30,16 +30,13 @@ def listing_add(request):
         product_form = ProductCreationForm(request.POST)
         if product_form.is_valid():
             print(f"---{user}---")
-            product_instance = product_form.save(commit=False)
 
             # Runs the code that spawns a scrapyd process.
             scraper = ScraperUtilz()
-            scraper.scrapyd_first_run(request, product_instance)
+            scraper.scrapyd_first_run(request, product_form.save(commit=False))
             scraper.wait_till_finished(1)
 
-            prod = r.get(scraper.uuid)
-            print(f'prod: {prod}')
-            prod = json.loads(prod)
+            prod = json.loads(r.get(scraper.uuid))
             Product.objects.create(
                 author=user,
                 name=prod['name'],
@@ -49,7 +46,6 @@ def listing_add(request):
             )
 
             newest_listing = Product.objects.filter(author=user).latest('date_added')
-            print(newest_listing.name)
 
             # Renders the detail view 
             return redirect('listing-detail', pk=newest_listing.pk)

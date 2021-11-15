@@ -18,6 +18,7 @@ class RemindMeScraperPipeline:
         print("Spider Opened")
 
     def process_item(self, item, spider):
+        print(f'---------------------------------------------------item: {item}')
         item = dict(item)
         uuid = item['uuid']
         json_response = json.dumps(item)

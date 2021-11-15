@@ -1,3 +1,4 @@
+import re
 import sys
 sys.path.append("remindme_scraper/remind_me_scraper")
 # find a better way for production ^^
@@ -10,9 +11,11 @@ from ..item_loaders import ProductLoader
 
 # To allow spider to work with scrapyd, spider init must allow for unspecifed number of args and kwargs (*args, **kwargs)
 
+# Don't forget to redeploy your project to scrapyd after each change you make within the scraper directory or else the changes won't take effect on the container.
 
 class ListingsSpider(scrapy.Spider):
 
+    
     def __init__(self, user_email, URL, optional_product_name=None, uuid=None, *args, **kwargs):
         self.user_email = user_email
         print(f"DEBUG: {self.user_email}")
@@ -40,25 +43,62 @@ class ListingsSpider(scrapy.Spider):
             
         loader.add_value("url", self.URL)
         
-        price = page.css("div #priceInsideBuyBox_feature_div div span:nth-child(1)").get()
-        loader.add_value("price", price)
+        stock_list = [
+            self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", page, 'Currently unavailable.'),
+        ]
+        out_of_stock = self.check_value(stock_list)
 
-        # TODO:
-        # Figure out why stock always returns False
-        if page.css("div #availability span.a-size-medium a-color-success"):
-            loader.add_value("stock", 1)
-        else:
+        price_list = [
+            page.xpath("//span[@id='price_inside_buybox']/text()").extract(),
+        ]
+        price = self.check_value(price_list)
+
+        if out_of_stock:
             loader.add_value("stock", 0)
+            loader.add_value("price", '0')
+        else:
+            loader.add_value("stock", 1)
+            loader.add_value("price", page.xpath("//span[@id='price_inside_buybox']/text()").extract())
         
         loader.add_value("user_email", self.user_email)
         loader.add_value("uuid", self.uuid)
         
         yield loader.load_item()
+    
+
+    def check_value(self, value_list):
+        """
+        Loops through each return value of a CSS selector and verifies that there is only one price value.
+        This allows us to add multiple functions that retrieve prices for certain pages that need to have their CSS selectors modified for.
+
+        Args:
+            page (object): parse method page response object.
+            loader (object): item loader object also from the parse method.
+
+        Returns:
+            p
+        """
+        value_verify = []
+
+        for value in value_list:
+            if value:
+                value_verify.append(value)
+        
+        if len(value_verify) < 1 or len(value_verify) > 1:
+            return False
+        else:
+            return value_verify[0]
+    
+    def get_out_of_stock(self, selector, page, expected_text):
+
+        if page.css(selector).get() == expected_text:
+            return True
+        else:
+            return False
         
 
 
 
-        
 
 
 

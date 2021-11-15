@@ -40,7 +40,7 @@ app.autodiscover_tasks()
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(600, check_for_updates.s(), name='check DB every 10')
+    sender.add_periodic_task(120, check_for_updates.s(), name='check DB every 10')
 
 
 @app.task
@@ -57,7 +57,7 @@ def check_for_updates():
         author = product.author
 
         diff = utc_now - product.last_updated
-        if diff.total_seconds() / 60 >= 10:
+        if diff.total_seconds() / 60 >= 1:
             print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
             scraper = ScraperUtilz()
             # Attatch an uuid to the scrapy product and store that in redis
@@ -67,26 +67,26 @@ def check_for_updates():
             prod = r.get(scraper.uuid)
             prod = json.loads(prod)
 
+            # Throws error here if amazon page doesn't have a price
             new_prod_price = prod['price']
             current_prod_price = product.price
+            
+            if new_prod_price != current_prod_price:
 
-            if new_prod_price is not current_prod_price:
                 product.price = new_prod_price
                 product.last_updated = utc_now
                 product.save()
 
-                diff = current_prod_price - new_prod_price
-                if diff > 0:
+                price_diff = current_prod_price - new_prod_price
+                if price_diff > 0:
                     # new prod price has decreased
                     
                     send_mail(
                         'RemindMeWhen Price Alert!',
                         f"""
-                        Hello, your product "{product.name}" has decreased in price by ${"%.2f" % diff}!
+                        Hello, your product "{product.name}" has decreased in price by ${price_diff}!
 
-                        |--------------------------------------------------------------------------------------|
                                 Old price: {current_prod_price} || Updated price: {new_prod_price}            
-                        |--------------------------------------------------------------------------------------|
 
 
                         Here is your product page: {product.url}
@@ -99,11 +99,11 @@ def check_for_updates():
                     print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
                     print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
-                elif diff < 0:
+                elif price_diff < 0:
                     # price has increased
 
                     # convert to a postive difference
-                    positive_diff = diff * -diff
+                    positive_diff = price_diff * -price_diff
 
                     # product.price = new_prod_price
                     
@@ -127,6 +127,10 @@ def check_for_updates():
                     print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
                     print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
+            if product.stock != prod['stock']:
+                product.stock = prod['stock']
+                product.last_updated = utc_now
+                product.save()
             else:
                 # don't run a DB operation since prices haven't changed
                 print(f"""db_periodic_checker: Product: "{product.name[:20]}".. skipped. Price of product hasn't changed""")

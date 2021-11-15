@@ -50,8 +50,8 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    """`
-    A form for updating users. Includes all the fields on
+    """
+    A form for updating users in the admin page. Includes all the fields on
     the user, but replaces the password field with admin's
     disabled password hash display field.
     """
