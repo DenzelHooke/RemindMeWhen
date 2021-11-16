@@ -2,7 +2,7 @@ FROM python:3.9
 
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /usr/src/remindme_scraper
+WORKDIR /usr/src/scraper
 
 COPY requirements.txt .
 
@@ -11,7 +11,7 @@ RUN pip install -r requirements.txt
 RUN pip install git+https://github.com/scrapy/scrapyd-client.git
 
 
-WORKDIR /usr/src/remindme_scraper/remind_me_scraper
+WORKDIR /usr/src/scraper/remind_me_scraper
 
 COPY . .
 
