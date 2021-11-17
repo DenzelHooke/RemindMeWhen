@@ -62,7 +62,7 @@ class ListingsSpider(scrapy.Spider):
         #     loader.add_value("price", '0')
         # else:
         loader.add_value("stock", 1)
-        loader.add_value("price", '<span>10</span>')
+        loader.add_value("price", page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract())
         
         loader.add_value("user_email", self.user_email)
         loader.add_value("uuid", self.uuid)

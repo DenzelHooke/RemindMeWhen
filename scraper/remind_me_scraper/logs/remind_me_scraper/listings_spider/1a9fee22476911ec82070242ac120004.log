@@ -1,0 +1,116 @@
+2021-11-17 05:42:11 [scrapy.utils.log] INFO: Scrapy 2.5.0 started (bot: remind_me_scraper)
+2021-11-17 05:42:11 [scrapy.utils.log] INFO: Versions: lxml 4.6.4.0, libxml2 2.9.10, cssselect 1.1.0, parsel 1.6.0, w3lib 1.22.0, Twisted 21.7.0, Python 3.9.9 (main, Nov 16 2021, 18:33:48) - [GCC 10.2.1 20210110], pyOpenSSL 21.0.0 (OpenSSL 1.1.1l  24 Aug 2021), cryptography 35.0.0, Platform Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-glibc2.31
+2021-11-17 05:42:11 [scrapy.utils.log] DEBUG: Using reactor: twisted.internet.epollreactor.EPollReactor
+2021-11-17 05:42:11 [scrapy.crawler] INFO: Overridden settings:
+{'BOT_NAME': 'remind_me_scraper',
+ 'LOG_FILE': 'logs/remind_me_scraper/listings_spider/1a9fee22476911ec82070242ac120004.log',
+ 'NEWSPIDER_MODULE': 'remind_me_scraper.spiders',
+ 'SPIDER_MODULES': ['remind_me_scraper.spiders']}
+2021-11-17 05:42:11 [scrapy.extensions.telnet] INFO: Telnet Password: 9ec8077be9ca4b9a
+2021-11-17 05:42:11 [scrapy.middleware] INFO: Enabled extensions:
+['scrapy.extensions.corestats.CoreStats',
+ 'scrapy.extensions.telnet.TelnetConsole',
+ 'scrapy.extensions.memusage.MemoryUsage',
+ 'scrapy.extensions.logstats.LogStats']
+2021-11-17 05:42:11 [scrapy.middleware] INFO: Enabled downloader middlewares:
+['scrapy.downloadermiddlewares.httpauth.HttpAuthMiddleware',
+ 'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware',
+ 'scrapy.downloadermiddlewares.defaultheaders.DefaultHeadersMiddleware',
+ 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware',
+ 'scrapy.downloadermiddlewares.retry.RetryMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.MetaRefreshMiddleware',
+ 'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware',
+ 'scrapy.downloadermiddlewares.redirect.RedirectMiddleware',
+ 'scrapy.downloadermiddlewares.cookies.CookiesMiddleware',
+ 'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware',
+ 'scrapy.downloadermiddlewares.stats.DownloaderStats']
+2021-11-17 05:42:11 [scrapy.middleware] INFO: Enabled spider middlewares:
+['scrapy.spidermiddlewares.httperror.HttpErrorMiddleware',
+ 'scrapy.spidermiddlewares.offsite.OffsiteMiddleware',
+ 'scrapy.spidermiddlewares.referer.RefererMiddleware',
+ 'scrapy.spidermiddlewares.urllength.UrlLengthMiddleware',
+ 'scrapy.spidermiddlewares.depth.DepthMiddleware']
+2021-11-17 05:42:11 [scrapy.middleware] INFO: Enabled item pipelines:
+['remind_me_scraper.pipelines.RemindMeScraperPipeline']
+2021-11-17 05:42:11 [scrapy.core.engine] INFO: Spider opened
+2021-11-17 05:42:11 [scrapy.extensions.logstats] INFO: Crawled 0 pages (at 0 pages/min), scraped 0 items (at 0 items/min)
+2021-11-17 05:42:11 [scrapy.extensions.telnet] INFO: Telnet console listening on 127.0.0.1:6023
+2021-11-17 05:42:13 [scrapy.core.engine] DEBUG: Crawled (200) <GET https://www.amazon.ca/Pro-Plan-Veterinary-FortiFlora-Supplement/dp/B09BDDNCFH/ref=zg-bsnr_pet-supplies_1/130-3078552-9182350?pd_rd_w=bJUv7&pf_rd_p=1b333d54-760c-4345-a197-05d66e42d3ba&pf_rd_r=KWNVXH6Y3AKW83QFA216&pd_rd_r=31357efb-0dfe-414a-a428-03930c80ef49&pd_rd_wg=Z4V1x&pd_rd_i=B09BDDNCFH&psc=1> (referer: None)
+2021-11-17 05:42:13 [scrapy.core.scraper] ERROR: Spider error processing <GET https://www.amazon.ca/Pro-Plan-Veterinary-FortiFlora-Supplement/dp/B09BDDNCFH/ref=zg-bsnr_pet-supplies_1/130-3078552-9182350?pd_rd_w=bJUv7&pf_rd_p=1b333d54-760c-4345-a197-05d66e42d3ba&pf_rd_r=KWNVXH6Y3AKW83QFA216&pd_rd_r=31357efb-0dfe-414a-a428-03930c80ef49&pd_rd_wg=Z4V1x&pd_rd_i=B09BDDNCFH&psc=1> (referer: None)
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/parsel/selector.py", line 254, in xpath
+    result = xpathev(query, namespaces=nsp,
+  File "src/lxml/etree.pyx", line 1582, in lxml.etree._Element.xpath
+  File "src/lxml/xpath.pxi", line 305, in lxml.etree.XPathElementEvaluator.__call__
+  File "src/lxml/xpath.pxi", line 225, in lxml.etree._XPathEvaluatorBase._handle_result
+lxml.etree.XPathEvalError: Invalid predicate
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/scrapy/utils/defer.py", line 120, in iter_errback
+    yield next(it)
+  File "/usr/local/lib/python3.9/site-packages/scrapy/utils/python.py", line 353, in __next__
+    return next(self.data)
+  File "/usr/local/lib/python3.9/site-packages/scrapy/utils/python.py", line 353, in __next__
+    return next(self.data)
+  File "/usr/local/lib/python3.9/site-packages/scrapy/core/spidermw.py", line 56, in _evaluate_iterable
+    for r in iterable:
+  File "/usr/local/lib/python3.9/site-packages/scrapy/spidermiddlewares/offsite.py", line 29, in process_spider_output
+    for x in result:
+  File "/usr/local/lib/python3.9/site-packages/scrapy/core/spidermw.py", line 56, in _evaluate_iterable
+    for r in iterable:
+  File "/usr/local/lib/python3.9/site-packages/scrapy/spidermiddlewares/referer.py", line 342, in <genexpr>
+    return (_set_referer(r) for r in result or ())
+  File "/usr/local/lib/python3.9/site-packages/scrapy/core/spidermw.py", line 56, in _evaluate_iterable
+    for r in iterable:
+  File "/usr/local/lib/python3.9/site-packages/scrapy/spidermiddlewares/urllength.py", line 40, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/usr/local/lib/python3.9/site-packages/scrapy/core/spidermw.py", line 56, in _evaluate_iterable
+    for r in iterable:
+  File "/usr/local/lib/python3.9/site-packages/scrapy/spidermiddlewares/depth.py", line 58, in <genexpr>
+    return (r for r in result or () if _filter(r))
+  File "/usr/local/lib/python3.9/site-packages/scrapy/core/spidermw.py", line 56, in _evaluate_iterable
+    for r in iterable:
+  File "/usr/src/scraper/remind_me_scraper/remind_me_scraper/spiders/listing_spider.py", line 65, in parse
+    loader.add_xpath("price", page.xpath("//div[@class='a-section a-spacing-micro']//span[@class=a-offscreen/text()").extract())
+  File "/usr/local/lib/python3.9/site-packages/parsel/selector.py", line 93, in xpath
+    return self.__class__(flatten([x.xpath(xpath, namespaces=namespaces, **kwargs) for x in self]))
+  File "/usr/local/lib/python3.9/site-packages/parsel/selector.py", line 93, in <listcomp>
+    return self.__class__(flatten([x.xpath(xpath, namespaces=namespaces, **kwargs) for x in self]))
+  File "/usr/local/lib/python3.9/site-packages/parsel/selector.py", line 260, in xpath
+    six.reraise(ValueError, ValueError(msg), sys.exc_info()[2])
+  File "/usr/local/lib/python3.9/site-packages/six.py", line 718, in reraise
+    raise value.with_traceback(tb)
+  File "/usr/local/lib/python3.9/site-packages/parsel/selector.py", line 254, in xpath
+    result = xpathev(query, namespaces=nsp,
+  File "src/lxml/etree.pyx", line 1582, in lxml.etree._Element.xpath
+  File "src/lxml/xpath.pxi", line 305, in lxml.etree.XPathElementEvaluator.__call__
+  File "src/lxml/xpath.pxi", line 225, in lxml.etree._XPathEvaluatorBase._handle_result
+ValueError: XPath error: Invalid predicate in //div[@class='a-section a-spacing-micro']//span[@class=a-offscreen/text()
+2021-11-17 05:42:13 [scrapy.core.engine] INFO: Closing spider (finished)
+2021-11-17 05:42:13 [scrapy.statscollectors] INFO: Dumping Scrapy stats:
+{'downloader/request_bytes': 563,
+ 'downloader/request_count': 1,
+ 'downloader/request_method_count/GET': 1,
+ 'downloader/response_bytes': 268341,
+ 'downloader/response_count': 1,
+ 'downloader/response_status_count/200': 1,
+ 'elapsed_time_seconds': 1.953414,
+ 'finish_reason': 'finished',
+ 'finish_time': datetime.datetime(2021, 11, 17, 5, 42, 13, 590168),
+ 'httpcompression/response_bytes': 1320608,
+ 'httpcompression/response_count': 1,
+ 'log_count/DEBUG': 1,
+ 'log_count/ERROR': 1,
+ 'log_count/INFO': 10,
+ 'memusage/max': 65957888,
+ 'memusage/startup': 65957888,
+ 'response_received_count': 1,
+ 'scheduler/dequeued': 1,
+ 'scheduler/dequeued/memory': 1,
+ 'scheduler/enqueued': 1,
+ 'scheduler/enqueued/memory': 1,
+ 'spider_exceptions/ValueError': 1,
+ 'start_time': datetime.datetime(2021, 11, 17, 5, 42, 11, 636754)}
+2021-11-17 05:42:13 [scrapy.core.engine] INFO: Spider closed (finished)
