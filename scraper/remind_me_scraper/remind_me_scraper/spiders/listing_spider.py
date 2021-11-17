@@ -43,22 +43,26 @@ class ListingsSpider(scrapy.Spider):
             
         loader.add_value("url", self.URL)
         
-        stock_list = [
-            self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", page, 'Currently unavailable.'),
-        ]
-        out_of_stock = self.check_value(stock_list)
+        # stock_list = [
+        #     self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", page, 'Currently unavailable.'),
+        # ]
+        # out_of_stock = self.check_value(stock_list)
+
+        out_of_stock = False
 
         price_list = [
             page.xpath("//span[@id='price_inside_buybox']/text()").extract(),
         ]
-        price = self.check_value(price_list)
 
-        if out_of_stock:
-            loader.add_value("stock", 0)
-            loader.add_value("price", '0')
-        else:
-            loader.add_value("stock", 1)
-            loader.add_value("price", page.xpath("//span[@id='price_inside_buybox']/text()").extract())
+        test_price = '<span>10</span>' 
+        price = self.check_value(price_list)
+        
+        # if out_of_stock:
+        #     loader.add_value("stock", 0)
+        #     loader.add_value("price", '0')
+        # else:
+        loader.add_value("stock", 1)
+        loader.add_value("price", '<span>10</span>')
         
         loader.add_value("user_email", self.user_email)
         loader.add_value("uuid", self.uuid)
@@ -69,7 +73,7 @@ class ListingsSpider(scrapy.Spider):
     def check_value(self, value_list):
         """
         Loops through each return value of a CSS selector and verifies that there is only one price value.
-        This allows us to add multiple functions that retrieve prices for certain pages that need to have their CSS selectors modified for.
+        This allows us to have multiple css selectors but only use the return value that's True
 
         Args:
             page (object): parse method page response object.
@@ -84,10 +88,9 @@ class ListingsSpider(scrapy.Spider):
             if value:
                 value_verify.append(value)
         
-        if len(value_verify) < 1 or len(value_verify) > 1:
-            return False
-        else:
+        if len(value_verify) == 1:
             return value_verify[0]
+        return None
     
     def get_out_of_stock(self, selector, page, expected_text):
 
