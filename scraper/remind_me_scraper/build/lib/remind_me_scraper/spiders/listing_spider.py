@@ -49,12 +49,14 @@ class ListingsSpider(scrapy.Spider):
         # out_of_stock = self.check_value(stock_list)
 
         out_of_stock = False
+        test_price = '<span>10</span>' 
 
         price_list = [
-            page.xpath("//span[@id='price_inside_buybox']/text()").extract(),
+            page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscree']/text()").extract(),
+            None, 
+            test_price,
         ]
 
-        test_price = '<span>10</span>' 
         price = self.check_value(price_list)
         
         # if out_of_stock:
@@ -62,7 +64,7 @@ class ListingsSpider(scrapy.Spider):
         #     loader.add_value("price", '0')
         # else:
         loader.add_value("stock", 1)
-        loader.add_value("price", page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract())
+        loader.add_value("price", price)
         
         loader.add_value("user_email", self.user_email)
         loader.add_value("uuid", self.uuid)
