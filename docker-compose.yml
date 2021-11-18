@@ -1,22 +1,22 @@
-version: "3.9"
+version: "3.3"
 
 services:
   web:
-    build: .\web
+    build: ./web
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .\web:/usr/src/remindme_web
+      - ./web:/usr/src/remindme_web
     ports: 
       - 8000:8000
     depends_on:
       - redis
 
   scrapy:
-    build: .\scraper
+    build: ./scraper
     command: scrapyd
     volumes:
-      - .\scraper\:/usr/src/scraper/
-      - .\scraper\etc\scrapyd\:/etc/scrapyd
+      - ./scraper/:/usr/src/scraper/
+      - ./scraper/etc/scrapyd/:/etc/scrapyd
     ports: 
       - 8080:8080
     depends_on:
@@ -24,20 +24,20 @@ services:
       - web
     
   celery-worker:
-    build: .\default\python\
+    build: ./default/python/
     command: celery -A remind_me_django worker --without-heartbeat --without-gossip --without-mingle 
     volumes:
-      - .\web\remind_me_django\:/usr/src/app/
+      - ./web/remind_me_django/:/usr/src/app/
     depends_on:
       - redis
       - web
       - scrapy
 
   celery-beat:
-    build: .\default\python\
+    build: ./default/python/
     command: celery -A remind_me_django beat --max-interval 1800
     volumes:
-      - .\web\remind_me_django\:/usr/src/app/
+      - ./web/remind_me_django/:/usr/src/app/
     depends_on:
       - redis
       - celery-worker
