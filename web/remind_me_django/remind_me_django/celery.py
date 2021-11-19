@@ -15,19 +15,12 @@ from .task_funcs import ScraperUtilz
 
 
 
-
-
-
-
-
-
-
-
 r = redis.Redis(host='redis', port=6379, db=0)
 scrapyd_api_url = 'http://scrapy:8080'
 app = Celery('remind_me_django')
-# time_to_check = timedelta(minutes=5).total_seconds
 time_to_check = 300
+minute_to_check = 5
+# time_to_check = timedelta(minutes=5).total_seconds
 
 
 # Using a string here means the worker doesn't have to serialize
@@ -40,10 +33,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
 
 # 'on_after_configure' is a signal to be sent after the celery app instance has *prepared* it's config settings.
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    # Calls test('hello') every 10 seconds.
-    sender.add_periodic_task(time_to_check, check_for_updates.s(), name='check DB every 10')
+try:
+    @app.on_after_configure.connect
+    def setup_periodic_tasks(sender, **kwargs):
+        # Calls test('hello') every 10 seconds.
+        sender.add_periodic_task(time_to_check, check_for_updates.s(), name='check DB every 10')
+except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
+    print("Connection Error")
 
 
 @app.task
@@ -61,7 +57,7 @@ def check_for_updates():
         current_time = pytz.utc.localize(dt.utcnow())
         diff = utc_now - product.last_updated
 
-        if diff.total_seconds() / 60 >= time_to_check:
+        if diff.total_seconds() / 60 >= minute_to_check:
             print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
             scraper = ScraperUtilz()
             # Attatch an uuid to the scrapy product and store that in redis
