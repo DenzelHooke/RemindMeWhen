@@ -26,7 +26,8 @@ from .task_funcs import ScraperUtilz
 r = redis.Redis(host='redis', port=6379, db=0)
 scrapyd_api_url = 'http://scrapy:8080'
 app = Celery('remind_me_django')
-time_to_check = timedelta(minutes=5)
+# time_to_check = timedelta(minutes=5).total_seconds
+time_to_check = 300
 
 
 # Using a string here means the worker doesn't have to serialize
@@ -47,7 +48,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 @app.task
 def check_for_updates():
-    """Peridocally runs scrapyd processes to check if..
+    """Peridocally runs scrapyd processes to check if product page data has been updated
     """
 
     # Can't compare offset aware(dt with timezone) with offset naive(dt without a timezone) datetime objects so 
@@ -57,11 +58,11 @@ def check_for_updates():
 
     for product in all_products:
         author = product.author
-
+        current_time = pytz.utc.localize(dt.utcnow())
         diff = utc_now - product.last_updated
-        if diff.total_seconds() / 60 >= time_to_check.seconds:
+
+        if diff.total_seconds() / 60 >= time_to_check:
             print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
-            current_time = pytz.utc.localize(dt.utcnow())
             scraper = ScraperUtilz()
             # Attatch an uuid to the scrapy product and store that in redis
             scraper.scrapyd_update_run(author, product)
@@ -69,18 +70,19 @@ def check_for_updates():
 
             prod = r.get(scraper.uuid)
             prod = json.loads(prod)
-
-            # Throws error here if amazon page doesn't have a price
             new_prod_price = prod['price']
             current_prod_price = product.price
             
+            # If new_price doesn't match up with current price
             if new_prod_price != current_prod_price and prod['stock']:
 
                 product.price = new_prod_price
                 product.last_updated = current_time
                 product.save()
 
+                # Calculate price difference
                 price_diff = current_prod_price - new_prod_price
+
                 if price_diff > 0:
                     # new prod price has decreased
                     
@@ -131,13 +133,12 @@ def check_for_updates():
                     print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
             elif not prod['stock']:
+                #If the scrapped product is out of stock
+
                 product.stock = prod['stock']
                 product.price = 0
                 product.last_updated = current_time
                 product.save()
-            else:
-                # don't run a DB operation since prices haven't changed
-                pass
 
             product.last_checked = utc_now
             product.save()
@@ -146,10 +147,6 @@ def check_for_updates():
         else:
             print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
         
-                 
-        
-    # If products differ from scraped resuslts add them onto Product
-    # If compared price is different, change price in DB and send an email informing the user that price has changed.
     
     
 
