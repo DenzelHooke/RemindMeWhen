@@ -3,5 +3,8 @@ web/remind_me_django/db.sqlite3
 *.env
 *.log
 .log
+*.twistd.pid
+.twistd.pid
 .vscode/
+
 
