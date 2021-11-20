@@ -69,9 +69,7 @@ class ListingsSpider(scrapy.Spider):
                     'In Stock.'
                 ),
             ]
-            # out_of_stock = self.check_value(stock_list)
 
-            out_of_stock = False
             test_price = '<span>10</span>' 
 
 
@@ -83,6 +81,7 @@ class ListingsSpider(scrapy.Spider):
             # test_price = '<span>10</span>' 
 
             price = self.check_value(price_list)
+            stock = self.check_value(stock_list)
             
             if not price:
                 loader.add_value("stock", False)
