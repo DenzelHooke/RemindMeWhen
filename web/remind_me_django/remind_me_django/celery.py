@@ -49,99 +49,103 @@ def check_for_updates():
 
     # Can't compare offset aware(dt with timezone) with offset naive(dt without a timezone) datetime objects so 
     # we localize our current time into a offset aware dt object.
+
     all_products = Product.objects.all()
     utc_now = pytz.utc.localize(dt.utcnow())
+    
+    if r.get('slowdown'):
+        print('Amazon Throttle detected, skipping on checking products')
 
-    for product in all_products:
-        author = product.author
-        current_time = pytz.utc.localize(dt.utcnow())
-        diff = utc_now - product.last_updated
+    else:
+        for product in all_products:
+            author = product.author
+            current_time = pytz.utc.localize(dt.utcnow())
+            diff = utc_now - product.last_updated
 
-        if diff.total_seconds() / 60 >= minute_to_check:
-            print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
-            scraper = ScraperUtilz()
-            # Attatch an uuid to the scrapy product and store that in redis
-            scraper.scrapyd_update_run(author, product)
-            scraper.wait_till_finished(1)
+            if diff.total_seconds() / 60 >= minute_to_check:
+                print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
+                scraper = ScraperUtilz()
+                # Attatch an uuid to the scrapy product and store that in redis
+                scraper.scrapyd_update_run(author, product)
+                scraper.wait_till_finished(1)
 
-            prod = r.get(scraper.uuid)
-            prod = json.loads(prod)
-            new_prod_price = prod['price']
-            current_prod_price = product.price
-            
-            # If new_price doesn't match up with current price
-            if new_prod_price != current_prod_price and prod['stock']:
+                prod = r.get(scraper.uuid)
+                prod = json.loads(prod)
+                new_prod_price = prod['price']
+                current_prod_price = product.price
+                
+                # If new_price doesn't match up with current price
+                if new_prod_price != current_prod_price and prod['stock']:
 
-                product.price = new_prod_price
-                product.last_updated = current_time
+                    product.price = new_prod_price
+                    product.last_updated = current_time
+                    product.save()
+
+                    # Calculate price difference
+                    price_diff = current_prod_price - new_prod_price
+
+                    if price_diff > 0:
+                        # new prod price has decreased
+                        
+                        send_mail(
+                            'RemindMeWhen Price Alert!',
+                            f"""
+                            Hello, your product "{product.name}" has decreased in price by ${price_diff}!
+
+                                    Old price: {current_prod_price} || Updated price: {product.price}            
+
+
+                            Here is your product page: {product.url}
+                            """,
+                            'denzelthecreator@gmail.com',
+                            [product.author.email],
+                            fail_silently=False,
+                        )
+
+                        print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
+                        print(f'db_periodic_checker: Email sent to "{product.author.email}"')
+
+                    elif price_diff < 0:
+                        # price has increased
+
+                        # convert to a postive difference
+                        positive_diff = price_diff * -1
+
+                        # product.price = new_prod_price
+                        
+                        send_mail(
+                            'RemindMeWhen Price Alert!',
+                            f"""
+                            Hello, your product "{product.name}" has increased in price by ${"%.2f" % positive_diff}!
+
+                            |------------------------------------------------------------------|
+                            |Old price: {current_prod_price} || Updated price: {product.price}|
+                            |------------------------------------------------------------------|
+
+
+                            Here is your product page: {product.url}
+                            """,
+                            'denzelthecreator@gmail.com',
+                            [product.author.email],
+                            fail_silently=False,
+                        )
+                        
+                        print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
+                        print(f'db_periodic_checker: Email sent to "{product.author.email}"')
+
+                elif not prod['stock']:
+                    #If the scrapped product is out of stock
+
+                    product.stock = prod['stock']
+                    product.last_updated = current_time
+                    product.save()
+
+                product.last_checked = utc_now
                 product.save()
+                time.sleep(5)
 
-                # Calculate price difference
-                price_diff = current_prod_price - new_prod_price
-
-                if price_diff > 0:
-                    # new prod price has decreased
-                    
-                    send_mail(
-                        'RemindMeWhen Price Alert!',
-                        f"""
-                        Hello, your product "{product.name}" has decreased in price by ${price_diff}!
-
-                                Old price: {current_prod_price} || Updated price: {product.price}            
-
-
-                        Here is your product page: {product.url}
-                        """,
-                        'denzelthecreator@gmail.com',
-                        [product.author.email],
-                        fail_silently=False,
-                    )
-
-                    print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
-                    print(f'db_periodic_checker: Email sent to "{product.author.email}"')
-
-                elif price_diff < 0:
-                    # price has increased
-
-                    # convert to a postive difference
-                    positive_diff = price_diff * -1
-
-                    # product.price = new_prod_price
-                    
-                    send_mail(
-                        'RemindMeWhen Price Alert!',
-                        f"""
-                        Hello, your product "{product.name}" has increased in price by ${"%.2f" % positive_diff}!
-
-                        |------------------------------------------------------------------|
-                        |Old price: {current_prod_price} || Updated price: {product.price}|
-                        |------------------------------------------------------------------|
-
-
-                        Here is your product page: {product.url}
-                        """,
-                        'denzelthecreator@gmail.com',
-                        [product.author.email],
-                        fail_silently=False,
-                    )
-                    
-                    print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
-                    print(f'db_periodic_checker: Email sent to "{product.author.email}"')
-
-            elif not prod['stock']:
-                #If the scrapped product is out of stock
-
-                product.stock = prod['stock']
-                product.price = 0
-                product.last_updated = current_time
-                product.save()
-
-            product.last_checked = utc_now
-            product.save()
-            time.sleep(5)
-
-        else:
-            print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
+            else:
+                print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
         
     
     

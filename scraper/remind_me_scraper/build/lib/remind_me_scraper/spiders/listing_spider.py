@@ -6,12 +6,21 @@ sys.path.append("remindme_scraper/remind_me_scraper")
 import scrapy
 from ..items import ProductItem
 from ..item_loaders import ProductLoader
+import pytz
+from datetime import datetime as dt, timedelta
+import redis
+
 
 # url https://www.amazon.ca/WOODIES-Walnut-Sunglasses-Bamboo-Packaging/dp/B07VSV3T3X/ref=sr_1_38?dchild=1&keywords=sunglasses&qid=1629158228&sr=8-38&th=1
 
 # To allow spider to work with scrapyd, spider init must allow for unspecifed number of args and kwargs (*args, **kwargs)
 
 # Don't forget to redeploy your project to scrapyd after each change you make within the scraper directory or else the changes won't take effect on the container.
+
+
+
+r = redis.Redis(host='redis', port=6379, db=0)
+
 
 class ListingsSpider(scrapy.Spider):
 
@@ -36,45 +45,57 @@ class ListingsSpider(scrapy.Spider):
         page = response.css("div.a-container")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
-        if self.optional_product_name:
-            loader.add_value("name", self.optional_product_name)
-        else:
-            loader.add_css("name", "span#productTitle")
+        if page:
+            if self.optional_product_name:
+                loader.add_value("name", self.optional_product_name)
+            else:
+                loader.add_css("name", "span#productTitle")
             
-        loader.add_value("url", self.URL)
-        
-        # Un-needed
+            # loader.add_xpath("name", "//span[@id='productTitle']/text()")
+            loader.add_value("url", self.URL)
+            
+            # stock_list = [
+            #     self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", page, 'Currently unavailable.'),
+            # ]
+            # out_of_stock = self.check_value(stock_list)
 
-        # stock_list = [
-        #     self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", 
-        #     page, 
-        #     'Currently unavailable.'),
-        # ]
-        # out_of_stock = self.check_value(stock_list)
+            out_of_stock = False
+            test_price = '<span>10</span>' 
 
 
-        price_list = [
-            page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract()
-        ]
 
-        # test_price = '<span>10</span>' 
+            price_list = [
+                page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract()
+            ]
 
-        price = self.check_value(price_list)
-        
-        if not price:
-            loader.add_value("stock", False)
-            loader.add_value("price", '<span>0</span>')
+            # test_price = '<span>10</span>' 
+
+            price = self.check_value(price_list)
+            
+            if not price:
+                loader.add_value("stock", False)
+                loader.add_value("price", '<span>0</span>')
+
+            else:
+                loader.add_value("stock", True)
+                loader.add_value("price", price)
+                
+            
+            loader.add_value("user_email", self.user_email)
+            loader.add_value("uuid", self.uuid)
+            
+            yield loader.load_item()
+
+        if r.get('slowdown'):
+            pass
 
         else:
-            loader.add_value("stock", True)
-            loader.add_value("price", price)
-            
+            utc_now = pytz.utc.localize(dt.utcnow())
+            r.set("slowdown", str(utc_now))
+            r.expire("slowdown", 600)
+            print("---slowdown SET!---")
+
         
-        loader.add_value("user_email", self.user_email)
-        loader.add_value("uuid", self.uuid)
-        
-        yield loader.load_item()
-    
 
     def check_value(self, value_list):
         """

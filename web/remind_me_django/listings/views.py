@@ -4,17 +4,31 @@ import json
 import redis
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, DeleteView
 from .models import Product
 from .forms import ProductCreationForm
 from remind_me_django.task_funcs import ScraperUtilz
-
-
+import pytz
+from datetime import datetime as dt, timedelta
+from dateutil import parser
 
 
 r = redis.Redis(host='redis', port=6379, db=0)
 
+def slowdown_detected(slowdown, request):
+    slowdown = slowdown.decode("utf-8")
+    slowdown_date = parser.parse(slowdown)
+    utc_now = pytz.utc.localize(dt.utcnow())
+    print(slowdown)
+    time_until_avail = utc_now - slowdown_date  
+    time_until_avail = 600 - time_until_avail.total_seconds()
+
+    # Means amazon has temp throttled our IP and we must wait before we can scrape again
+    print("Scraper is currently being throttled by Amazon")
+    #send flash message informing user
+    messages.warning(request, f"Our Amazon scraper is temporarily unavailable, please try again shortly in {int(time_until_avail)} seconds")
 
 @login_required
 def listing_add(request):
@@ -30,25 +44,37 @@ def listing_add(request):
         product_form = ProductCreationForm(request.POST)
         if product_form.is_valid():
             print(f"---{user}---")
+            slowdown = r.get('slowdown')
+            print(f'----slowdown: {slowdown}----')
+            if slowdown:
+                slowdown_detected(slowdown, request)
+                return redirect('listing-add-page')
 
-            # Runs the code that spawns a scrapyd process.
-            scraper = ScraperUtilz()
-            scraper.scrapyd_first_run(request, product_form.save(commit=False))
-            scraper.wait_till_finished(1)
+            else:
+                print("--scraper add view--")
+                # Runs the code that spawns a scrapyd process.
+                scraper = ScraperUtilz()
+                scraper.scrapyd_first_run(request, product_form.save(commit=False))
+                scraper.wait_till_finished(1)
+                slowdown = r.get('slowdown')
 
-            prod = json.loads(r.get(scraper.uuid))
-            Product.objects.create(
-                author=user,
-                name=prod['name'],
-                price=prod['price'],
-                stock=prod['stock'],
-                url=prod['url']
-            )
+                if slowdown:
+                    slowdown_detected(slowdown, request)
+                    return redirect('listing-add-page')
 
-            newest_listing = Product.objects.filter(author=user).latest('date_added')
+                prod = json.loads(r.get(scraper.uuid))
+                Product.objects.create(
+                    author=user,
+                    name=prod['name'],
+                    price=prod['price'],
+                    stock=prod['stock'],
+                    url=prod['url']
+                )
 
-            # Renders the detail view 
-            return redirect('listing-detail', pk=newest_listing.pk)
+                newest_listing = Product.objects.filter(author=user).latest('date_added')
+
+                # Renders the detail view 
+                return redirect('listing-detail', pk=newest_listing.pk)
 
     else:
         product_form = ProductCreationForm()
