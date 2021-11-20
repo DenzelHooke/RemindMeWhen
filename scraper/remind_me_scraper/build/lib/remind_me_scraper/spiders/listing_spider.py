@@ -1,4 +1,6 @@
 import re
+from datetime import datetime as dt, timedelta
+from random import randrange
 import sys
 sys.path.append("remindme_scraper/remind_me_scraper")
 # find a better way for production ^^
@@ -7,7 +9,6 @@ import scrapy
 from ..items import ProductItem
 from ..item_loaders import ProductLoader
 import pytz
-from datetime import datetime as dt, timedelta
 import redis
 
 
@@ -42,10 +43,12 @@ class ListingsSpider(scrapy.Spider):
         yield scrapy.Request(self.URL, callback=self.parse)
     
     def parse(self, response):
-        page = response.css("div.a-container")
+        
+        page = response.css("div#ppd")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
         if page:
+            print("page found!")
             if self.optional_product_name:
                 loader.add_value("name", self.optional_product_name)
             else:
@@ -87,9 +90,12 @@ class ListingsSpider(scrapy.Spider):
             yield loader.load_item()
 
         if r.get('slowdown'):
+            # If this already exists, do nothing
             pass
 
         else:
+            print("**page NOT found**")
+            # Set a slowdown str within Redis
             utc_now = pytz.utc.localize(dt.utcnow())
             r.set("slowdown", str(utc_now))
             r.expire("slowdown", 600)

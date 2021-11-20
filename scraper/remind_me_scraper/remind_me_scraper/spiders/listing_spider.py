@@ -1,4 +1,6 @@
 import re
+from datetime import datetime as dt, timedelta
+from random import randrange
 import sys
 sys.path.append("remindme_scraper/remind_me_scraper")
 # find a better way for production ^^
@@ -7,7 +9,6 @@ import scrapy
 from ..items import ProductItem
 from ..item_loaders import ProductLoader
 import pytz
-from datetime import datetime as dt, timedelta
 import redis
 
 
@@ -42,10 +43,12 @@ class ListingsSpider(scrapy.Spider):
         yield scrapy.Request(self.URL, callback=self.parse)
     
     def parse(self, response):
-        page = response.css("div.a-container")
+        
+        page = response.css("div#ppd")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
         if page:
+            print("page found!")
             if self.optional_product_name:
                 loader.add_value("name", self.optional_product_name)
             else:
@@ -54,9 +57,18 @@ class ListingsSpider(scrapy.Spider):
             # loader.add_xpath("name", "//span[@id='productTitle']/text()")
             loader.add_value("url", self.URL)
             
-            # stock_list = [
-            #     self.get_out_of_stock("span .a-color-price a-text-bold div span:nth-child(1)", page, 'Currently unavailable.'),
-            # ]
+            stock_list = [
+                self.out_of_stock(
+                    "//div[@id='availability']//span[@class='a-size-medium a-color-state']/text()", 
+                    page, 
+                    'Currently unavailable.'
+                ),
+                self.in_stock(
+                    "//div[@id='availability']//span[@class='a-size-medium a-color-success']/text()", 
+                    page, 
+                    'In Stock.'
+                ),
+            ]
             # out_of_stock = self.check_value(stock_list)
 
             out_of_stock = False
@@ -87,12 +99,15 @@ class ListingsSpider(scrapy.Spider):
             yield loader.load_item()
 
         if r.get('slowdown'):
+            # If this already exists, do nothing
             pass
 
         else:
+            print("**page NOT found**")
+            # Set a slowdown str within Redis
             utc_now = pytz.utc.localize(dt.utcnow())
             r.set("slowdown", str(utc_now))
-            r.expire("slowdown", 600)
+            r.expire("slowdown", 80)
             print("---slowdown SET!---")
 
         
@@ -119,13 +134,27 @@ class ListingsSpider(scrapy.Spider):
             return value_verify[0]
         return None
     
-    def get_out_of_stock(self, selector, page, expected_text):
+    def out_of_stock(self, selector, page, expected_text=None):
+        text = page.xpath(selector).extract()
 
-        if page.css(selector).get() == expected_text:
-            return True
+        if text == expected_text:
+            return 'out of stock'
+
+        elif 'In stock on' in text:
+            return 'out of stock'
+            
         else:
-            return False
+            return None
         
+    def in_stock(self, selector, page, expected_text):
+        if page.xpath(selector).extract() == expected_text:
+            return 'in stock'
+        else:
+            return None
+    
+
+
+
 
 
 
