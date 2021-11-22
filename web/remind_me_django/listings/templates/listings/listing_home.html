@@ -23,6 +23,11 @@
                         {% csrf_token %}
                         <button class="btn btn-danger btn-delete" type="submit">X</button>
                     </form>
+                    {% if product.stock == True %}
+                        <span class="btn btn-success">In Stock</span>  
+                    {% else %}
+                        <span class="btn btn-danger">Out of stock</span>
+                    {% endif %}
                 </li>
             {% endfor %}
         

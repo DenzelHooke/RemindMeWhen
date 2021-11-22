@@ -18,7 +18,15 @@ import redis
 
 # Don't forget to redeploy your project to scrapyd after each change you make within the scraper directory or else the changes won't take effect on the container.
 
+# Unavailable product pages
 
+# https://www.amazon.ca/Water-Positive-Pregnancy-Domestic-Priority/dp/B07D35C7VK/ref=sr_1_8?keywords=test&qid=1637548524&refinements=p_n_availability%3A12035748011&rnid=12035746011&sr=8-8
+
+# out of stock messages
+
+# Temporarily out of stock.
+# Currently unavailable.
+# In stock on
 
 r = redis.Redis(host='redis', port=6379, db=0)
 
@@ -43,8 +51,8 @@ class ListingsSpider(scrapy.Spider):
         yield scrapy.Request(self.URL, callback=self.parse)
     
     def parse(self, response):
-        
-        page = response.css("div#ppd")
+        # div#dp-container
+        page = response.css("div.a-section")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
         if page:
@@ -53,42 +61,54 @@ class ListingsSpider(scrapy.Spider):
                 loader.add_value("name", self.optional_product_name)
             else:
                 loader.add_css("name", "span#productTitle")
-            
-            # loader.add_xpath("name", "//span[@id='productTitle']/text()")
+
             loader.add_value("url", self.URL)
             
             stock_list = [
-                self.out_of_stock(
-                    "//div[@id='availability']//span[@class='a-size-medium a-color-state']/text()", 
-                    page, 
-                    'Currently unavailable.'
-                ),
-                self.in_stock(
-                    "//div[@id='availability']//span[@class='a-size-medium a-color-success']/text()", 
-                    page, 
-                    'In Stock.'
-                ),
+                page.xpath("//div[@id='availability']//span[@class='a-size-medium']/text()").extract(),
             ]
-
-            test_price = '<span>10</span>' 
-
-
 
             price_list = [
                 page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract()
             ]
+            print(f"STOCK_LIST: {stock_list}")
+            print(f"PRICE_LIST: {price_list}")
 
             # test_price = '<span>10</span>' 
-
             price = self.check_value(price_list)
-            stock = self.check_value(stock_list)
+
+            if not stock_list[0]:
+                print("--Stock element not found.--")
+                stock = False
+            else:
+                print("--Stock element found.--")
+                stock = stock_list[0].lower().replace('.', '')
+
+
+            status_1 = "temporarily out of stock"
+            status_2 = "currently unavailable"
+            status_3 = "in stock on"
+            status_4 = "in stock"
+
             
             if not price:
                 loader.add_value("stock", False)
                 loader.add_value("price", '<span>0</span>')
 
             else:
-                loader.add_value("stock", True)
+                if stock == False:
+                    loader.add_value("stock", False)
+                # If out of stock:
+                elif stock == status_1:
+                    loader.add_value("stock", False)
+                # If in stock:
+                elif stock == status_4:
+                    loader.add_value("stock", True)
+                elif stock == status_2:
+                    loader.add_value("stock", False)
+                elif status_3 in stock:
+                    loader.add_value("stock", False)
+                
                 loader.add_value("price", price)
                 
             
@@ -97,7 +117,7 @@ class ListingsSpider(scrapy.Spider):
             
             yield loader.load_item()
 
-        if r.get('slowdown'):
+        elif r.get('slowdown'):
             # If this already exists, do nothing
             pass
 
@@ -110,7 +130,6 @@ class ListingsSpider(scrapy.Spider):
             print("---slowdown SET!---")
 
         
-
     def check_value(self, value_list):
         """
         Loops through each return value of a CSS selector and verifies that there is only one price value.
