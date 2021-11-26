@@ -19,9 +19,15 @@
                     </div>
                 {% endfor %}
             </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Track</button>
-            </div>
+            {% if temp_user_block %}
+                <div class="form-group">
+                    <button class="btn btn-danger" type="button">Temporaily disabled</button>
+                </div>
+            {%else%}
+                <div class="form-group">
+                    <button class="btn btn-outline-info" type="submit">Track</button>
+                </div>
+            {% endif %}
         </form>
     </div>
 {% endblock %}

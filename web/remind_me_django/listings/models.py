@@ -19,7 +19,16 @@ class Product(models.Model):
         ordering = ["date_added"]
 
     def __str__(self):
-        return f"{self.url}" 
+        return f"""
+        Product Name: "{self.name}"
+            - Author: "{self.author}"
+            - Stock: {self.stock}
+            - Price: {self.price}
+            - Date Added: {self.date_added}
+            - Last Updated: {self.last_updated} 
+            - Last Checked: {self.last_checked} 
+            - URL: {self.url}
+        """ 
 
     def get_absolute_url(self):
         # Reverse returns the full URL path to the specified url path name.

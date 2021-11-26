@@ -3,23 +3,30 @@ import time
 from datetime import datetime as dt, timedelta
 import pytz
 import json
-import redis
+from random import randrange
 
+
+import redis
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
 django.setup()
 from django.core.mail import send_mail
 from listings.models import Product
 from celery import Celery
-from .task_funcs import ScraperUtilz
+from .task_funcs import ScraperUtilz, update_prod_last_updated
+from .email_stuff import Product_Email
 
 
 
 r = redis.Redis(host='redis', port=6379, db=0)
 scrapyd_api_url = 'http://scrapy:8080'
 app = Celery('remind_me_django')
-time_to_check = 300
-minute_to_check = 5
+
+# 5 min
+time_to_run = 300
+db_slowdown_ttl = 300
+# 10 min
+minute_to_check = 10
 # time_to_check = timedelta(minutes=5).total_seconds
 
 
@@ -36,8 +43,7 @@ app.autodiscover_tasks()
 try:
     @app.on_after_configure.connect
     def setup_periodic_tasks(sender, **kwargs):
-        # Calls test('hello') every 10 seconds.
-        sender.add_periodic_task(time_to_check, check_for_updates.s(), name='check DB every 10')
+        sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
     print("Connection Error")
 
@@ -52,102 +58,130 @@ def check_for_updates():
 
     all_products = Product.objects.all()
     utc_now = pytz.utc.localize(dt.utcnow())
-    
-    if r.get('slowdown'):
+    db_error_count_limit = 3
+    count = 0
+
+    if r.get('check_DB_slowdown'):
         print('Amazon Throttle detected, skipping on checking products')
 
     else:
         for product in all_products:
             author = product.author
-            current_time = pytz.utc.localize(dt.utcnow())
             diff = utc_now - product.last_updated
-
+            
+            # If the product was last checked past a certain time, send it to the scraper
             if diff.total_seconds() / 60 >= minute_to_check:
                 print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
                 scraper = ScraperUtilz()
-                # Attatch an uuid to the scrapy product and store that in redis
-                scraper.scrapyd_update_run(author, product)
-                scraper.wait_till_finished(1)
-
-                prod = r.get(scraper.uuid)
-                prod = json.loads(prod)
-                new_prod_price = prod['price']
-                current_prod_price = product.price
+                time.sleep(randrange(2, 5))
                 
-                # If new_price doesn't match up with current price
-                if new_prod_price != current_prod_price and prod['stock']:
+                # Check if the db count is greater than X
+                if r.get("check_DB_error_count"):
+                    # If the key exists and it's count is greater or equal to the limit, 
+                    # Create a key with the desired ttl.
+                    # This is the slowdown key and will put a temp hold on this celery func
+                    #  from scraping other products until it's ended.
+                    if int(r.get("check_DB_error_count")) >= db_error_count_limit:
+                        count = 0
+                        utc_now = pytz.utc.localize(dt.utcnow())
 
+                        r.set("check_DB_slowdown", str(utc_now))
+                        r.expire("check_DB_slowdown", db_slowdown_ttl)
+                        break
+
+                try:
+                    scraper.scrapyd_update_run(author, product)
+                    scraper.wait_till_finished(1)
+                    new_product_data = json.loads(r.get(scraper.uuid))
+                except Exception as e:
+                    print(e)
+                    print("Product Skipped due to the scraper not finding the product page")
+                    print(product)
+                    count += 1
+                    print(f"Error count: {count}")
+                    r.set("check_DB_error_count", count)
+                    if r.ttl("check_DB_error_count") < 0:
+                        r.expire("check_DB_error_count", 20)
+                    continue
+
+                current_time = pytz.utc.localize(dt.utcnow())
+                new_prod_price = new_product_data['price']
+                old_prod_price = product.price
+                product_email = Product_Email(product, new_product_data)
+                
+                # If new_price doesn't match up with current price and it's in stock
+                if new_prod_price != old_prod_price and new_product_data['stock']:
+                    
                     product.price = new_prod_price
                     product.last_updated = current_time
                     product.save()
 
                     # Calculate price difference
-                    price_diff = current_prod_price - new_prod_price
+                    price_diff = product_email.price_diff
 
                     if price_diff > 0:
                         # new prod price has decreased
-                        
-                        send_mail(
-                            'RemindMeWhen Price Alert!',
-                            f"""
-                            Hello, your product "{product.name}" has decreased in price by ${price_diff}!
-
-                                    Old price: {current_prod_price} || Updated price: {product.price}            
-
-
-                            Here is your product page: {product.url}
-                            """,
-                            'denzelthecreator@gmail.com',
-                            [product.author.email],
-                            fail_silently=False,
-                        )
-
-                        print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
-                        print(f'db_periodic_checker: Email sent to "{product.author.email}"')
+                        if not product.stock:
+                            # If the product is currently out of stock, send an in stock & price decrease email
+                            product_email.send_in_stock_price_decrease()
+                        else:
+                            # If it was already in stock, just send a price decreease email
+                            product_email.send_price_decrease_email()
+                            print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
+                            print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
                     elif price_diff < 0:
                         # price has increased
 
-                        # convert to a postive difference
-                        positive_diff = price_diff * -1
+                        if not old_prod_price:
+                            # If there is no
+                            product_email.send_in_stock_email()
+                    
+                        # product_email.send_price_increase_email()
+                        # print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
+                        # print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
-                        # product.price = new_prod_price
+                elif new_prod_price != old_prod_price and not new_product_data['stock']:
+                    # If current product was out of stock before the scrape then the product price is only updated.
+
+                    # # Prod is unavailable
+                    # if new_prod_price == 0:
+                    #     product_email.send_out_of_stock_email()
                         
-                        send_mail(
-                            'RemindMeWhen Price Alert!',
-                            f"""
-                            Hello, your product "{product.name}" has increased in price by ${"%.2f" % positive_diff}!
+                    product.price = new_product_data['price']
 
-                            |------------------------------------------------------------------|
-                            |Old price: {current_prod_price} || Updated price: {product.price}|
-                            |------------------------------------------------------------------|
+                    # Else if product was in stock before the scrape but it's now out of stock.
+                    if product.stock:
+                        product_email.send_out_of_stock_email()
+                
+                    product.stock = False
+                    update_prod_last_updated(product, current_time)
+    
+                #  If not in stock
+                elif not new_product_data['stock']:
+                    #If the scrapped product was already out of stock, do nothing
+                    if not product.stock:
+                        pass
+                    else:
+                        product.stock = new_product_data['stock']
+                        product_email.send_out_of_stock_email()
+                        update_prod_last_updated(product, current_time)
+                
+                # If in stock
+                elif new_product_data['stock']:
+                    #If the scrapped product was already in stock, do nothing
+                    if product.stock:
+                        pass
+                    else:
+                        product.stock = new_product_data['stock']
+                        product_email.send_in_stock_email()
+                        update_prod_last_updated(product, current_time)
 
 
-                            Here is your product page: {product.url}
-                            """,
-                            'denzelthecreator@gmail.com',
-                            [product.author.email],
-                            fail_silently=False,
-                        )
-                        
-                        print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
-                        print(f'db_periodic_checker: Email sent to "{product.author.email}"')
-
-                elif not prod['stock']:
-                    #If the scrapped product is out of stock
-
-                    product.stock = prod['stock']
-                    product.last_updated = current_time
-                    product.save()
-
-                product.last_checked = utc_now
+                utc_now_last_checked = pytz.utc.localize(dt.utcnow())
+                product.last_checked = utc_now_last_checked
                 product.save()
                 time.sleep(5)
 
             else:
                 print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
-        
-    
-    
-
-

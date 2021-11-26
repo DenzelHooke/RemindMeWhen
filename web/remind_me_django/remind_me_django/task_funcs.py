@@ -1,7 +1,11 @@
 import time
+import os
 from uuid import uuid4
-
 from scrapyd_api import ScrapydAPI
+import django
+os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
+django.setup()
+
 
 
 
@@ -115,7 +119,6 @@ class ScraperUtilz:
 
         while True:
             job_status = self._scrapyd_api.job_status(self._project_name, self.__job_id)
-            print(job_status)
             if job_status != "finished":
                 print(f"Job status: {job_status}")
                 while True:
@@ -126,3 +129,6 @@ class ScraperUtilz:
                 print(f"--Job status: {job_status}!--")
                 break
 
+def update_prod_last_updated(product, current_time):
+    product.last_updated = current_time
+    product.save()

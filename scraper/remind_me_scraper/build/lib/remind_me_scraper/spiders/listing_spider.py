@@ -1,6 +1,6 @@
 import re
 from datetime import datetime as dt, timedelta
-from random import randrange
+import random 
 import sys
 sys.path.append("remindme_scraper/remind_me_scraper")
 # find a better way for production ^^
@@ -28,6 +28,18 @@ import redis
 # Currently unavailable.
 # In stock on
 
+USER_AGENTS = [
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.110 Safari/537.36',  # chrome
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.79 Safari/537.36',  # chrome
+'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:55.0) Gecko/20100101 Firefox/55.0',  # firefox
+'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.91 Safari/537.36',  # chrome
+]
+# 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.89 Safari/537.36',  # chrome
+# 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.108 Safari/537.36',  # chrome
+# 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15', # safari
+# 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36 Edg/96.0.1054.34', # MS Edge win 10
+# 'Mozilla/5.0 (Macintosh; Intel Mac OS X 12_0_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36 Edg/96.0.1054.34', # MS EDGE macOS
+
 r = redis.Redis(host='redis', port=6379, db=0)
 
 
@@ -44,7 +56,9 @@ class ListingsSpider(scrapy.Spider):
         self.uuid = uuid
 
     name = "listings_spider"
-    user_agent = 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
+    # user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:94.0) Gecko/20100101 Firefox/94.0'
+    user_agent = random.choice(USER_AGENTS)
+    print(f"USER AGENT: {user_agent}-------")
     
 
     def start_requests(self):
@@ -52,9 +66,10 @@ class ListingsSpider(scrapy.Spider):
     
     def parse(self, response):
         # div#dp-container
-        page = response.css("div.a-section")
+        page = response.css("div#ppd")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
+        print(page)
         if page:
             print("page found!")
             if self.optional_product_name:
@@ -65,12 +80,14 @@ class ListingsSpider(scrapy.Spider):
             loader.add_value("url", self.URL)
             
             stock_list = [
-                page.xpath("//div[@id='availability']//span[@class='a-size-medium']/text()").extract(),
+                page.xpath("//div[@id='availability']//span[@class='a-size-medium a-color-success']/text()").extract(),
             ]
 
             price_list = [
                 page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract()
             ]
+
+            
             print(f"STOCK_LIST: {stock_list}")
             print(f"PRICE_LIST: {price_list}")
 
@@ -82,7 +99,7 @@ class ListingsSpider(scrapy.Spider):
                 stock = False
             else:
                 print("--Stock element found.--")
-                stock = stock_list[0].lower().replace('.', '')
+                stock = stock_list[0][0].lower().replace('.', '').replace(',', '').strip()
 
 
             status_1 = "temporarily out of stock"
@@ -117,17 +134,19 @@ class ListingsSpider(scrapy.Spider):
             
             yield loader.load_item()
 
-        elif r.get('slowdown'):
-            # If this already exists, do nothing
-            pass
-
         else:
             print("**page NOT found**")
-            # Set a slowdown str within Redis
-            utc_now = pytz.utc.localize(dt.utcnow())
-            r.set("slowdown", str(utc_now))
-            r.expire("slowdown", 80)
-            print("---slowdown SET!---")
+            # r.get("celery-slowdown")
+            # #  add 
+            # # Set a slowdown str within Redis
+            # utc_now = pytz.utc.localize(dt.utcnow())
+            # r.set("slowdown", str(utc_now))
+            # r.expire("slowdown", 10)
+            # print("---slowdown SET!---")
+            # if r.get(f"MANUAL_SCRAPE-{str(self.uuid)}"):
+
+
+
 
         
     def check_value(self, value_list):
