@@ -16,14 +16,16 @@
 }
 
 .sidebar-inner-wrapper{
-    min-width: var(--sidebar_width);
-    background: var(--sidebar_bg);
     position: sticky;
     top: 0;
-    /* I can't remember why I added the align-self property. It seems to have zero effect. */
-    align-self: flex-start;
+    /* Turns off flex-shrink that's set by default */
+    flex-shrink: 0;
+    width: var(--sidebar_width);
+    background: var(--sidebar_bg);
     height: calc(100vh - 65.1px);
     border-right: 1px solid rgb(224, 224, 224);
+    transition: width 1s;
+    overflow: hidden;
 }
 
 .sidebar-options{
@@ -58,4 +60,11 @@
     margin-right: 10px;                                                                                                          
     width:30px; 
     height: 30px;
+}
+
+
+@media  screen and (max-width: 850px) {
+    .sidebar-inner-wrapper{
+        width: 0px;
+    }
 }

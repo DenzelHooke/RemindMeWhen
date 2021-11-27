@@ -46,7 +46,6 @@
 
 .media-wrap{
     display: flex;
-    max-width: 80%;
     margin: 0 auto;
     flex-direction: column;
     justify-content: center;
@@ -68,4 +67,34 @@
 .media-wrap p:nth-child(2){
     font-size: 26px;
     font-weight: bold;
+}
+
+.hide{
+    display: none;
+}
+
+
+/* Profile column switch */
+@media screen and (max-width: 1350px){
+    .profile-grid{
+        grid-template-columns: 1fr 400px 1fr;
+        grid-template-rows: 400px auto;
+        gap: 10px
+    }
+
+    .profile-forms{
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    #profile-card{
+        grid-column: 2;
+
+    }
+}
+
+
+/* Mobile */
+@media screen and (max-width: 850px){
+    
 }
