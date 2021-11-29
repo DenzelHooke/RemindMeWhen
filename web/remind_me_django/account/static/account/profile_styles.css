@@ -41,7 +41,8 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 400px auto;
-    gap: 10px
+    gap: 10px;
+    transition: all;
 }
 
 .media-wrap{
@@ -52,6 +53,7 @@
 }
 
 .media-wrap img{
+    display: block;
     margin: 15px auto;
     object-fit: cover;
     width: 100%;
@@ -75,10 +77,10 @@
 
 
 /* Profile column switch */
-@media screen and (max-width: 1350px){
+@media screen and (max-width: 1000px){
     .profile-grid{
         grid-template-columns: 1fr 400px 1fr;
-        grid-template-rows: 400px auto;
+        grid-template-rows: auto auto;
         gap: 10px
     }
 
@@ -87,14 +89,61 @@
         grid-row: 2;
     }
 
-    #profile-card{
+    #profile-pic-card{
         grid-column: 2;
+        padding: 10px;
+    }
 
+    #profile-pic-card img{
+        align-self: center;
+        order: 2;
+        margin: 0;
+        height: 100px;
+        width: 100px;
+        border-radius: 100px;
+        object-fit: fill;
+    }
+
+    #about-me{
+        order: 1;
+    }
+
+    #profile-bio{
+        order: 3;
+        margin-bottom: 20px;
     }
 }
 
+/* Small Mobile */
+@media screen and (max-width: 550px){
+    .profile-grid{
+        grid-template-columns: 1fr 150px 1fr;
+        grid-template-rows: auto auto;
+        gap: 25px;
+    }
 
-/* Mobile */
-@media screen and (max-width: 850px){
+    #profile-pic-card{
+        grid-column: 1 / -1;
+        border-radius: 80px;
+        padding: 0;
+        box-shadow: none    ;
+    }
     
+    #profile-pic-card img{
+        order: 1;
+        align-self: flex-start;
+        height: 150px;
+        width: 150px;
+        margin: 0;
+    }
+
+    .profile-info{
+        padding: 45px 18px 45px;
+    }
+    .profile-forms{
+        box-shadow: none;
+        border-radius: 0;
+        padding: 2px;
+
+    }
 }

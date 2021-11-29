@@ -50,7 +50,8 @@
         <!-- Displays sidebar if 'sidebar':True in context. -->
         {% if sidebar %}
             <div class="sidebar-outside-wrapper">
-                <nav class="sidebar-inner-wrapper">   
+                <nav class="sidebar-inner-wrapper">
+                    <a href="#" class="sidebar-closeBtn">X</a>   
                     <ul class="sidebar-options">
                         <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'profile-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/user_svg_test.svg" %}'>Profile</a></li>
                         <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'listing-add-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/pen_paper.svg" %}'>Add listings</a></li>
@@ -58,11 +59,12 @@
                     </ul>
                 </nav>
                 <div class="sidebar-content-wrapper">
+                    <a class="open-sidebar-btn"></a>
                     {% block sidebar_content %}
                     {% endblock %}
                 </div>
             </div>
-        {% else %}
+            {% else %}
             {% block content %}
             {% endblock %}
             <div class="pagination-wrapper">

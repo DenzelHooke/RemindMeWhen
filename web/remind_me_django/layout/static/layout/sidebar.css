@@ -4,6 +4,7 @@
     --profile-sidebar-link_hover: rgb(243, 0, 0);
     --sidebar-li-hover: rgb(153, 153, 153);
     --sidebar_bg: rgb(245, 245, 245);
+    --sidebar-text-mobile-color: rgb(236, 236, 236);
 }
 
 .main-content{
@@ -25,7 +26,7 @@
     height: calc(100vh - 65.1px);
     border-right: 1px solid rgb(224, 224, 224);
     transition: width 1s;
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 .sidebar-options{
@@ -64,7 +65,59 @@
 
 
 @media  screen and (max-width: 850px) {
+    .sidebar-outside-wrapper{
+        position: relative;
+    }
+
+    
+
     .sidebar-inner-wrapper{
+        position: absolute;
+        border: none;
+        left: 0;
+        top: 0;
         width: 0px;
+        height: 100%;
+        z-index: 99;
+        overflow: hidden;
+        background:rgba(22, 22, 22, 0.897);
+    }
+
+    .sidebar-options li{
+        color: var(--sidebar-text-mobile-color);
+        font-weight: bold;
+    }
+
+    .profile-sidebar-link:visited{
+        color: var(--sidebar-text-mobile-color);
+    }
+
+    .sidebar-content-wrapper{
+        z-index: 1;
+    }
+    .sidebar-options{
+        align-items: center;
+    }
+
+    .sidebar-li{
+        outline: 3px solid rgba(255, 255, 255, 0.438);
+        text-align: center;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .sidebar-closeBtn{
+        position: absolute;
+        right: 15px;
+        top: 0;
+        color: white;
+        font-size: 40px;
+        font-family: Lato;
+        font-weight: light;
+    }
+
+    .sidebar-closeBtn:hover{
+        color: white;
+        text-decoration: none;
     }
 }
