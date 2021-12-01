@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, width=device-width, user-scalable=no" />
     <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{% static 'layout/base.css' %}"> 
     {% if sidebar %}
@@ -47,11 +47,21 @@
     {% endif %}
 
     <section class="main-content">
+        <div class="sidebar-open-btn">
+            <div id="sidebar-open-btn-line"></div>
+        </div>
+        <nav id="mobile-sidebar" class="mobile-sidebarClosed">
+            <ul class="sidebar-options">
+                <li class="mobile-sidebar-li" ><a class="link" href="{% url 'profile-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/user_svg_test.svg" %}'>Profile</a></li>
+                <li class="mobile-sidebar-li" ><a href="{% url 'listing-add-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/pen_paper.svg" %}'>Add listings</a></li>
+                <li class="mobile-sidebar-li" ><a href="{% url 'listing-home-page' %}"><img   id='listings-svg' class='sidebar-li-svg' src='{% static "layout/listings_paper.svg" %}'>Listings</a></li>
+            </ul>
+        </nav>
         <!-- Displays sidebar if 'sidebar':True in context. -->
         {% if sidebar %}
             <div class="sidebar-outside-wrapper">
                 <nav class="sidebar-inner-wrapper">
-                    <a href="#" class="sidebar-closeBtn">X</a>   
+                    <!-- <a href="#" class="sidebar-closeBtn">X</a>    -->
                     <ul class="sidebar-options">
                         <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'profile-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/user_svg_test.svg" %}'>Profile</a></li>
                         <li class="sidebar-li" ><a class="link profile-sidebar-link" href="{% url 'listing-add-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/pen_paper.svg" %}'>Add listings</a></li>
@@ -60,6 +70,7 @@
                 </nav>
                 <div class="sidebar-content-wrapper">
                     <a class="open-sidebar-btn"></a>
+                    
                     {% block sidebar_content %}
                     {% endblock %}
                 </div>
@@ -99,6 +110,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="{% static 'layout/mobile.js' %}"></script>
 </body>
 </html>
 

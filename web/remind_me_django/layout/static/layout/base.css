@@ -50,7 +50,7 @@ body{
 }
 
 .main-content{
-    max-width: 90vw;
+    padding-top: 66px;
     margin: 0 auto;
     margin-top: 80px;
     color:rgb(31, 31, 31);
@@ -61,12 +61,17 @@ body{
 }
 
 .navbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     display: grid;  
     background: var(--navbar_bg);
     grid-template-columns: 20px 0.5fr 100px 0.5fr 20px;
     min-height: 60px;
     color: var(--nav_text);
     border-bottom: 1px rgba(24, 24, 24, 0.89) solid;
+    z-index: 800;
 }
 
 .logo{
@@ -215,12 +220,6 @@ input {
     justify-content: center;
 }
 
-@media screen and (max-width: 750px){
-    .nav-ul{
-        display: none;
-    }
-}
-
 .grid{
     display: grid;
     grid-template-columns: 1fr 2fr;
@@ -270,3 +269,110 @@ input {
 /* BASE */
 
 
+/* Mobile sidebar */
+
+#mobile-sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    background:rgb(34, 34, 34);
+    transition: width 1s;
+    z-index: 400;
+    overflow: hidden;
+}
+
+#mobile-sidebar ul{
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    padding-top: 150px;
+    list-style: none;
+    height: 100%;
+    margin: 0;
+    justify-content: flex-start;
+}
+
+#mobile-sidebar li{
+    text-align: center;
+    border: solid 1px rgb(77, 77, 77);
+    margin-bottom: -1px;
+}
+
+#mobile-sidebar a{  
+    
+    display: block;
+    color: white;
+    padding: 20px;
+    white-space: nowrap;
+    text-align: center;
+    font-family: Roboto;
+    font-weight: 300;
+    transition: background 0.5s;
+}
+
+#mobile-sidebar a:hover{
+    background: rgba(126, 126, 126, 0.411);
+}
+
+
+.sidebar-li-svg{
+    margin-right: 10px;                                                                                                          
+    width:30px; 
+    height: 30px;
+}
+
+.mobile-sidebarClosed{
+    width: 0px;
+}
+
+@media  screen and (max-width: 850px) {
+    .sidebar-inner-wrapper{
+        width: 0px;
+        border: 0;
+    }
+    
+    .sidebar-open-btn{
+        position: fixed;
+        background: var(--navbar_bg);
+        width: 60px;
+        height: 60px;
+        top: 0;
+        right: 20px;
+        border-radius: 40px;
+        z-index: 999;
+    }
+    
+    #sidebar-open-btn-line{
+        position: absolute;
+        width: 25px;
+        height: 2px;
+        top: 30px;
+        left: 18px;
+        background: var(--nav_text);
+    }
+    
+    #sidebar-open-btn-line::after{
+        content:'';
+        position: absolute;
+        width: 25px;
+        height: 2px;
+        top: 5px;
+        background: var(--nav_text);
+    }
+    
+    #sidebar-open-btn-line::before{
+        content:'';
+        position: absolute;
+        width: 25px;
+        height: 2px;
+        bottom: 5px;
+        background: var(--nav_text);
+    }
+
+    .nav-ul{
+        display: none;
+    }
+
+    
+} 
