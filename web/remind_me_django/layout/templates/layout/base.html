@@ -52,9 +52,16 @@
         </div>
         <nav id="mobile-sidebar" class="mobile-sidebarClosed">
             <ul class="sidebar-options">
-                <li class="mobile-sidebar-li" ><a class="link" href="{% url 'profile-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/user_svg_test.svg" %}'>Profile</a></li>
-                <li class="mobile-sidebar-li" ><a href="{% url 'listing-add-page' %}"><img  class='sidebar-li-svg' src='{% static "layout/pen_paper.svg" %}'>Add listings</a></li>
-                <li class="mobile-sidebar-li" ><a href="{% url 'listing-home-page' %}"><img   id='listings-svg' class='sidebar-li-svg' src='{% static "layout/listings_paper.svg" %}'>Listings</a></li>
+                <li class="mobile-sidebar-li"><a class="link" href="{% url 'home-page' %}">HOME</a></li>
+                {% if user.is_authenticated %}
+                    <li class="mobile-sidebar-li" ><a class="link" href="{% url 'profile-page' %}">PROFILE</a></li>
+                    <li class="mobile-sidebar-li" ><a class="link" href="{% url 'listing-add-page' %}">TRACK PRODUCT</a></li>
+                    <li class="mobile-sidebar-li" ><a class="link" href="{% url 'listing-home-page' %}">VIEW PRODUCTS</a></li>
+                    <li class="mobile-sidebar-li"><a class="link" href="{% url 'logout-page' %}">LOGOUT</a></li>
+                {% else %}
+                    <li class="li-item"><a class="link" href="{% url 'login-page' %}">LOGIN</a></li>
+                    <li class="li-item"><a class="link" href="{% url 'register-page' %}">REGISTER</a></li>
+                {% endif %} 
             </ul>
         </nav>
         <!-- Displays sidebar if 'sidebar':True in context. -->
