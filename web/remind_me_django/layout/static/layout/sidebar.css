@@ -9,6 +9,7 @@
 
 .main-content{
     position: relative;
+    padding-left: 0;
     margin: 0;
     max-width: 100%;
 }
@@ -72,7 +73,12 @@
 @media  screen and (max-width: 850px) {
     .sidebar-inner-wrapper{
         width: 0px;
-        border: 0;
+    }
+
+    .main-content{
+        transition: padding 1s;
+        padding-left: 0;
+        padding-right: 0;
     }
     
 } 

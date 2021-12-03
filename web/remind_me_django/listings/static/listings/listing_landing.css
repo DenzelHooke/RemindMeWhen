@@ -2,3 +2,11 @@
     margin: 100px 40px;
     flex-basis: 800px;
 }
+
+@media screen and (max-width: 850px){
+    #scraper-form-card form{
+        padding: 0;
+        box-shadow: none;
+    }
+    
+}
