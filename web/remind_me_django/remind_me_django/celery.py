@@ -45,7 +45,7 @@ try:
     def setup_periodic_tasks(sender, **kwargs):
         sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
-    print("Connection Error")
+    print("SQL ELEPHANT Connection Error")
 
 
 @app.task
@@ -112,6 +112,7 @@ def check_for_updates():
                 # If new_price doesn't match up with current price and it's in stock
                 if new_prod_price != old_prod_price and new_product_data['stock']:
                     
+                    # Updated current product price with new price
                     product.price = new_prod_price
                     product.last_updated = current_time
                     product.save()

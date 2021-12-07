@@ -26,6 +26,7 @@
     overflow: hidden;
     max-width: 600px;
     font-size: 20px;
+    transition: .5s ease-in-out;
 }
 
 #product-listing button{

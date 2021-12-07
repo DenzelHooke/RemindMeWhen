@@ -132,3 +132,4 @@ class ScraperUtilz:
 def update_prod_last_updated(product, current_time):
     product.last_updated = current_time
     product.save()
+

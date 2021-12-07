@@ -25,9 +25,11 @@
     --button_bg_hover: rgb(64, 137, 233);
     --btn_font_size: 1.4rem;
     --btn_border_radius: 4px;
+    --btn-line-trans-time: .3s;
 
     --helper_text_color: rgb(218, 218, 218);
     --error_bg: rgb(223, 65, 65);
+
         
 }
 
@@ -274,7 +276,7 @@ input {
 #mobile-sidebar{
     position: fixed;
     top: 0;
-    left: 0;
+    left: 0;   
     bottom: 0;
     background:rgb(34, 34, 34);
     transition: width 1s;
@@ -323,8 +325,29 @@ input {
 }
 
 .mobile-sidebarClosed{
-    width: 0px;
+    width: 0%;
 }
+.mobile-sidebarClosed #mobile-sidebar-btn-line{
+    width: 25px;
+}
+
+/* Mobile btn transitions */
+#mobile-sidebar-btn-line{
+    transition: all var(--btn-line-trans-time) ease-in-out;
+}
+
+.mobile-btn-sidebarOpen #mobile-sidebar-btn-line{
+    background: rgb(224, 224, 224, 0);
+}
+
+.mobile-btn-sidebarOpen #mobile-sidebar-btn-line::before{
+    transform:  translateY(5px) rotate(40deg);
+}
+
+.mobile-btn-sidebarOpen #mobile-sidebar-btn-line::after{
+    transform: translateY(-5px) rotate(-40deg);
+}
+/* MOBILE VIEW */
 
 @media  screen and (max-width: 850px) {
     .sidebar-inner-wrapper{
@@ -332,7 +355,7 @@ input {
         border: 0;
     }
     
-    .sidebar-open-btn{
+    .mobile-sidebar-btn{
         position: fixed;
         display: flex;
         align-items: center;
@@ -346,32 +369,34 @@ input {
         z-index: 999;
     }
     
-    #sidebar-open-btn-line{
+    #mobile-sidebar-btn-line{
         position: relative;
-        width: 25px;
+        width: 30px;
         height: 2px;
         /* margin: 0 auto; */
         background: var(--nav_text);
     }
     
-    #sidebar-open-btn-line::after{
+    #mobile-sidebar-btn-line::after{
+        transition: var(--btn-line-trans-time) ease-in-out;
         content:'';
         position: absolute;
-        width: 25px;
+        width: inherit;
         height: 2px;
         top: 5px;
         background: var(--nav_text);
     }
     
-    #sidebar-open-btn-line::before{
+    #mobile-sidebar-btn-line::before{
+        transition: var(--btn-line-trans-time) ease-in-out;
         content:'';
         position: absolute;
-        width: 25px;
+        width: inherit;
         height: 2px;
         bottom: 5px;
         background: var(--nav_text);
     }
-
+    
     .nav-ul{
         display: none;
     }
@@ -384,8 +409,8 @@ input {
     .logo{
         grid-column: 1 / -1;
     }
-
-    .sidebar-open-btn{
+    
+    .mobile-sidebar-btn{
         background: var(--navbar_bg);
         width: 45px;
         height: 45px;
