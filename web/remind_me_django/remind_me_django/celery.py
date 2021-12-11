@@ -3,6 +3,7 @@ import time
 from datetime import datetime as dt, timedelta
 import pytz
 import json
+import logging
 from random import randrange
 
 
@@ -13,7 +14,7 @@ django.setup()
 from django.core.mail import send_mail
 from listings.models import Product
 from celery import Celery
-from .task_funcs import ScraperUtilz, update_prod_last_updated
+from .task_funcs import ScraperUtilz, update_prod_last_updated, scrape_https_proxies
 from .email_stuff import Product_Email
 
 
@@ -43,14 +44,17 @@ app.autodiscover_tasks()
 try:
     @app.on_after_configure.connect
     def setup_periodic_tasks(sender, **kwargs):
-        sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
+        # sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
+        sender.add_periodic_task(timedelta(minutes=5), scrape_proxies.s(), name='scrape_free_proxies')
+
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
     print("SQL ELEPHANT Connection Error")
 
 
 @app.task
 def check_for_updates():
-    """Peridocally runs scrapyd processes to check if product page data has been updated
+    """
+    Peridocally runs scrapyd processes to check if product page data has been updated
     """
 
     # Can't compare offset aware(dt with timezone) with offset naive(dt without a timezone) datetime objects so 
@@ -73,10 +77,11 @@ def check_for_updates():
             if diff.total_seconds() / 60 >= minute_to_check:
                 print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
                 scraper = ScraperUtilz()
-                time.sleep(randrange(2, 5))
+                time.sleep(randrange(3, 8))
                 
                 # Check if the db count is greater than X
                 if r.get("check_DB_error_count"):
+                    print('')
                     # If the key exists and it's count is greater or equal to the limit, 
                     # Create a key with the desired ttl.
                     # This is the slowdown key and will put a temp hold on this celery func
@@ -186,3 +191,19 @@ def check_for_updates():
 
             else:
                 print(f'db_periodic_checker: Product: {product.name[:20]}.. skipped.\nLast checked: {diff.total_seconds() / 60} minutes ago')
+
+@app.task
+def scrape_proxies():
+    logging.debug("scraping proxies.")
+    proxies_list = [
+        'https://free-proxy-list.net/',
+        ]
+
+    if r.lrange('https_proxies', 0, -1):
+        logging.debug("Proxy array already exists with Redis DB, deleting array.")   
+        r.delete('https_proxies')
+
+    # Store proxies in Redis.
+    good_proxies = scrape_https_proxies(proxies_list)
+    logging.debug(good_proxies)
+    r.lpush('https_proxies', *good_proxies)

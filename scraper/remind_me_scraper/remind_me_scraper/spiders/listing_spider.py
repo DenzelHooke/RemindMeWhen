@@ -61,7 +61,9 @@ class ListingsSpider(scrapy.Spider):
     
 
     def start_requests(self):
-        yield scrapy.Request(self.URL, callback=self.parse)
+        yield scrapy.Request(
+            self.URL, 
+            callback=self.parse)
     
     def parse(self, response):
         # div#dp-container

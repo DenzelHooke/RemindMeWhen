@@ -1,5 +1,8 @@
 import time
 import os
+import requests
+import logging
+from bs4 import BeautifulSoup
 from uuid import uuid4
 from scrapyd_api import ScrapydAPI
 import django
@@ -132,4 +135,41 @@ class ScraperUtilz:
 def update_prod_last_updated(product, current_time):
     product.last_updated = current_time
     product.save()
+
+def scrape_https_proxies(proxy_list):
+    """
+    Scrape proxies and return an iterable with acceptable proxies.
+
+    Args:
+        proxy_list (list): List of free proxy website url strings.
+    """
+
+
+    parser = 'lxml'
+
+    good_proxies = []
+
+    for url in proxy_list:
+        soup = BeautifulSoup(requests.get(url).text, parser)
+
+
+        # free-proxy-list.net
+        if url == 'https://free-proxy-list.net/':
+            # Get Table of data
+            tbody = soup.find('tbody')
+
+            # loop thru each table row
+            for tr in tbody.find_all('tr'):
+                # Create a list of all td within this table row
+                td_list = [td.text for td in tr.find_all('td')]
+                # Filter out bad proxies if they're elite proxy and https
+                if td_list[4] == 'elite proxy' and td_list[6] == 'yes':
+                    proxy = f'https://{td_list[0]}:{td_list[1]}'
+
+                    # Append string 
+                    good_proxies.append(proxy)
+    logging.debug(good_proxies)
+    return good_proxies
+
+
 
