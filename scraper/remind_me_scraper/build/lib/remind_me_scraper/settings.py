@@ -46,20 +46,19 @@ DUPEFILTER_DEBUG = False
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
 SPIDER_MIDDLEWARES = {
    # 'remind_me_scraper.middlewares.RetrySpiderMiddleware': 500,
-   'remind_me_scraper.middlewares.TestProxyRejectMiddleware': 500,
+   # 'remind_me_scraper.middlewares.TestProxyRejectMiddleware': 500,
    
 }
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 
-PROXY_POOL_ENABLED = True
+# PROXY_POOL_ENABLED = True
 
 DOWNLOADER_MIDDLEWARES = {
-   'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':100,
-   'remind_me_scraper.middlewares.ProxyMiddleware': 150,
-   # 'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
-   # 'scrapy_useragents.downloadermiddlewares.useragents.UserAgentsMiddleware': 200,
+   'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
+   'remind_me_scraper.middlewares.RandomUserAgentMiddleware': 200,
+   'remind_me_scraper.middlewares.ProxyMiddleware': 250,
    # 'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
    # 'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
 

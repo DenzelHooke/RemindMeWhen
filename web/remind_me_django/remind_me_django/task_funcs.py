@@ -106,7 +106,7 @@ class ScraperUtilz:
         job_status = self._scrapyd_api.job_status(self._project_name, self.__job_id)
         return job_status
 
-    def wait_till_finished(self, time_to_poll):
+    def wait_till_finished(self, time_to_poll=1):
         """
         Blocks until scrapyd.job_status returns "finished". 
         Once "finished" is received, the function stops blocking.
@@ -118,15 +118,24 @@ class ScraperUtilz:
             project {str} -- String of scrapyd project name deployed as egg to scrapyd.\n
             time_to_poll {int/float} -- Value used to determine how long it should take in between each poll (1 second recommended) .
         """
+        flag = False
+        count = 0
+        time_limit = 20
 
-
-        while True:
+        while not flag:
             job_status = self._scrapyd_api.job_status(self._project_name, self.__job_id)
             if job_status != "finished":
                 print(f"Job status: {job_status}")
                 while True:
                     time.sleep(time_to_poll)
-                    if job_status != self._scrapyd_api.job_status(self._project_name, self.__job_id):
+                    count +=1
+                    
+                    if count >= time_limit:
+                        flag = True
+                        logging.debug('wait_till_finished func: LIMIT HIT. BREAKING LOOP')
+                        break
+
+                    elif job_status != self._scrapyd_api.job_status(self._project_name, self.__job_id):
                         break
             else:
                 print(f"--Job status: {job_status}!--")
@@ -144,15 +153,11 @@ def scrape_https_proxies(proxy_list):
         proxy_list (list): List of free proxy website url strings.
     """
 
-
     parser = 'lxml'
-
     good_proxies = []
 
     for url in proxy_list:
         soup = BeautifulSoup(requests.get(url).text, parser)
-
-
         # free-proxy-list.net
         if url == 'https://free-proxy-list.net/':
             # Get Table of data
@@ -165,7 +170,6 @@ def scrape_https_proxies(proxy_list):
                 # Filter out bad proxies if they're elite proxy and https
                 if td_list[4] == 'elite proxy' and td_list[6] == 'yes':
                     proxy = f'https://{td_list[0]}:{td_list[1]}'
-
                     # Append string 
                     good_proxies.append(proxy)
     logging.debug(good_proxies)

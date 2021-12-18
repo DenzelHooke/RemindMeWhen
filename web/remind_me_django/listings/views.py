@@ -21,6 +21,13 @@ logging.basicConfig(level=logging.DEBUG)
 r = redis.Redis(host='redis', port=6379, db=0)
 
 def slowdown_detected(slowdown, request):
+    """Runs if a slowdown is detected from the celery auto updater.
+    Displays an error message to the user.
+
+    Args:
+        slowdown (Redis byte): A redis byte object that represents the datetime when the slowdown was set.
+        request (request object): Django request object.
+    """
     slowdown = slowdown.decode("utf-8")
     slowdown_date = parser.parse(slowdown)
     utc_now = pytz.utc.localize(dt.utcnow())
@@ -34,6 +41,13 @@ def slowdown_detected(slowdown, request):
     messages.warning(request, f"Our Amazon scraper is temporarily unavailable, please try again shortly in {int(time_until_avail)} seconds")
 
 def user_slowdown_detected(slowdown, request, initial_ttl):
+    """Runs if user has a temp ban. Displays an error message to the user.
+
+    Args:
+        slowdown (Redis byte): A redis byte object that represents the datetime when the slowdown was set.
+        request (request object): Django request object.
+        initial_ttl (The current ttl of the Redis object): The current ttl of the temp ban.
+    """
     slowdown = slowdown.decode("utf-8")
     slowdown_date = parser.parse(slowdown)
     utc_now = pytz.utc.localize(dt.utcnow())
@@ -50,6 +64,52 @@ def user_slowdown_detected(slowdown, request, initial_ttl):
         messages.warning(request, f"Please try again shortly in {int(initial_ttl)} minutes.")
     else:
         messages.warning(request, f"Please try again shortly in {int(time_until_avail)} seconds.")
+
+def create_product(user, scraper):
+    """Creates a product row.
+
+    Args:
+        user (user object): Django lazy user object.
+        scraper (object): A scraper object instance.
+    """
+    prod = json.loads(r.get(scraper.uuid))
+    Product.objects.create(
+        author=user,
+        name=prod['name'],
+        price=prod['price'],
+        stock=prod['stock'],
+        url=prod['url']
+    )
+
+def manage_temp_ban(user, temp_ban_count_ttl):
+    """Creates or incrmenets a temp ban for the user. 
+
+    Args:
+        user (user object): Django lazy user object.
+        temp_ban_count_ttl (int): An int that represents the amount of time a temp ban should last.
+    """
+    utc_now = pytz.utc.localize(dt.utcnow())
+    user_error_count = r.get(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
+    logging.debug(user_error_count)
+    if not user_error_count:
+        # If not, create a key with a value of 1 (initial error)
+        logging.debug("user error count SET")
+
+        r.setex(
+        f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}", 
+        temp_ban_count_ttl, 
+        1)
+    else:
+        # If it already exists, get the current ttl, create a new key with the old key's ttl but increment the error count by 1
+
+        logging.debug("user error count ADDED")
+        count_ttl = r.ttl(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
+        if count_ttl:
+            r.setex(
+            f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}",
+            count_ttl,
+            int(user_error_count)+1)
+
 
 
 @login_required
@@ -75,16 +135,19 @@ def listing_add(request):
             check_DB_slowdown = r.get("check_DB_slowdown")
             logging.debug(f'----celery_slowdown: {check_DB_slowdown}----')
             if check_DB_slowdown:
+                # If a db slowdown exists, display a message to the user and redirect them. 
                 slowdown_detected(check_DB_slowdown, request)
                 return redirect('listing-add-page')
 
             else:
                 # Check if user has exceeded the error limit
-
+                
+                # If user slowdown exists and it's count is greater than the error count limit
                 user_slowdown_count = r.get(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
                 if user_slowdown_count and int(user_slowdown_count) >= error_count_limit:
                     logging.debug("BING_____")
                     utc_now = pytz.utc.localize(dt.utcnow())
+                    # If the user doesn't already have a temp block already set, create one.
                     if not r.get(f"TEMP-USER-BLOCK:{user.email}"):
                         r.setex(f"TEMP-USER-BLOCK:{user.email}", temp_ban_key_ttl, str(utc_now))
 
@@ -95,43 +158,14 @@ def listing_add(request):
                     scraper.scrapyd_first_run(request, product_form.save(commit=False))
                     scraper.wait_till_finished(1)
                     try:
-                        prod = json.loads(r.get(scraper.uuid))
-                        Product.objects.create(
-                            author=user,
-                            name=prod['name'],
-                            price=prod['price'],
-                            stock=prod['stock'],
-                            url=prod['url']
-                        )
-
+                        create_product(user, scraper)
                         newest_listing = Product.objects.filter(author=user).latest('date_added')
 
                         # Renders the detail view 
                         return redirect('listing-detail', pk=newest_listing.pk)
-                    except:
-                        # There was most likely a key error (Redis key wasn't created eu to page not being found)
-
-                        # Create a timestamp and check if there is already an error count for the user
-                        utc_now = pytz.utc.localize(dt.utcnow())
-                        user_error_count = r.get(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
-                        logging.debug(user_error_count)
-                        if not user_error_count:
-                            # If not, create a key with a value of 1 (initial error)
-                            logging.debug("user error count SET")
-
-                            r.setex(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}", 
-                            temp_ban_count_ttl, 
-                            1)
-                        else:
-                            # If it already exists, get the current ttl, create a new key with the old key's ttl but increment the error count by 1
-
-                            logging.debug("user error count ADDED")
-                            count_ttl = r.ttl(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
-
-                            r.setex(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}",
-                            count_ttl,
-                            int(user_error_count)+1)
-                    
+                    except TypeError:
+                        # There was most likely a key error (Redis key wasn't created due to page not being found)
+                        manage_temp_ban(user, temp_ban_count_ttl)
                         messages.warning(request, f"Sorry, that Amazon page couldn't be found at this time.")
     
     product_form = ProductCreationForm()
@@ -140,6 +174,7 @@ def listing_add(request):
     context['sidebar'] = True
     context['form'] = product_form
 
+    # If t
     if r.get(f"TEMP-USER-BLOCK:{user.email}"):
         context['temp_user_block'] = True
         user_slowdown_detected(r.get(f"TEMP-USER-BLOCK:{user.email}"), request, temp_ban_key_ttl)
@@ -167,9 +202,6 @@ class ProductListView(LoginRequiredMixin, ListView):
         context['sidebar'] = True
         # print(context)
         return context
-
-
-  
 
 class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Product
