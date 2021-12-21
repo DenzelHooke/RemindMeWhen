@@ -17,8 +17,6 @@ import logging
 import time
 from .settings import USER_AGENTS
 
-
-
 r = redis.Redis(host='redis', port=6379, db=0)
 class NoProxiesAvailable(Exception):
     def __init__(self, message='No proxies available!'):
@@ -203,3 +201,6 @@ class ProxyMiddleware:
         #     time.sleep(3)
             # return request
 
+class SlowdownRequestMiddleware:
+    def process_request(self, request, spider):
+        time.sleep(random.randint(5, 11))

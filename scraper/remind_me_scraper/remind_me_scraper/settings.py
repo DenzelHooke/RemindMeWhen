@@ -56,11 +56,10 @@ SPIDER_MIDDLEWARES = {
 # PROXY_POOL_ENABLED = True
 
 DOWNLOADER_MIDDLEWARES = {
+   'remind_me_scraper.middlewares.SlowdownRequestMiddleware': 100,
    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
    'remind_me_scraper.middlewares.RandomUserAgentMiddleware': 200,
-   'remind_me_scraper.middlewares.ProxyMiddleware': 250,
-   # 'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
-   # 'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+
 
 }
 

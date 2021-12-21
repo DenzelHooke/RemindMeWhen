@@ -6,7 +6,6 @@ import json
 import logging
 from random import randrange
 
-
 import redis
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
@@ -42,7 +41,7 @@ app.autodiscover_tasks()
 try:
     @app.on_after_configure.connect
     def setup_periodic_tasks(sender, **kwargs):
-        # sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
+        sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
         sender.add_periodic_task(timedelta(minutes=5), scrape_proxies.s(), name='scrape_free_proxies')
 
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
@@ -78,24 +77,21 @@ def check_for_updates():
                 if diff.total_seconds() / 60 >= minute_to_check:
                     print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
                     scraper = ScraperUtilz()
-                    time.sleep(randrange(3, 8))
                     
-                    # Check if the db count is greater than X
+                    # Check if the db count exists
                     if r.get("check_DB_error_count"):
-                        print('')
                         # If the key exists and it's count is greater or equal to the limit, 
                         # Create a key with the desired ttl.
-                        # This is the slowdown key and will put a temp hold on any changes to product data, including this celery task.
+                        # This is the slowdown key and will put a temp hold on any changes to product data through the scraper including this celery task.
 
                         if int(r.get("check_DB_error_count")) >= db_error_count_limit:
-                            count = 0
+                            # count = 0
                             utc_now = pytz.utc.localize(dt.utcnow())
-
                             r.set("check_DB_slowdown", str(utc_now))
                             r.expire("check_DB_slowdown", db_slowdown_ttl)
                             break
-
                     try:
+                        time.sleep(4)
                         scraper.scrapyd_update_run(author, product)
                         scraper.wait_till_finished(1)
                         new_product_data = json.loads(r.get(scraper.uuid))

@@ -349,12 +349,7 @@ input {
 }
 /* MOBILE VIEW */
 
-@media  screen and (max-width: 850px) {
-    .sidebar-inner-wrapper{
-        width: 0px;
-        border: 0;
-    }
-    
+@media  screen and (max-width: 950px) {    
     .mobile-sidebar-btn{
         position: fixed;
         display: flex;
@@ -403,7 +398,6 @@ input {
 
     
 } 
-
 
 @media screen and (max-width: 390px){
     .logo{

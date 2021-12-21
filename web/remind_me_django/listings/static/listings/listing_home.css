@@ -1,15 +1,13 @@
 .product-container{
     display: flex;
     flex-direction: column;
-    padding: 0;
-    min-width: 200px;
-    max-width: 800px;
+    padding: 3px;
+    max-width: 600px;
     margin: 0 auto;
     margin-top: 40px;
     list-style: none;
     height: 100%;
 }
-
 
 .product-container li {
     margin: 10px 10px;
@@ -24,7 +22,6 @@
 #product-listing {
     position: relative;
     overflow: hidden;
-    max-width: 600px;
     font-size: 20px;
     transition: .5s ease-in-out;
 }
@@ -53,13 +50,19 @@
     margin-bottom: 10px
 }
 
-@media  screen and (max-width: 850px) {
+@media  screen and (max-width: 800px) {
+    .product-container {
+        max-width: none;
+        width: 90%;
+    }
+
     #inner-card-name{
-        font-size: 20px;
+        font-size: 25px;
     }
 
     #product-listing{
         padding: 5px;
+        margin: 0;
         margin-bottom: 40px;
     }
 
@@ -67,4 +70,5 @@
         padding: 0;
         padding-top: 20px;
     }
+
 } 
