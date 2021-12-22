@@ -1,0 +1,16 @@
+FROM python:3.9
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /usr/src/remind_me_django
+
+COPY . .
+RUN export PYTHONPATH=/usr/src/remind_me_django/
+RUN pip install -r requirements.txt
+RUN pip install psycopg2-binary
+# RUN chown nobody:nogroup celerybeat-schedule
+
+RUN ["apt-get", "update"]
+RUN ["apt-get", "install", "-y", "nano"]
+
+CMD celery -A remind_me_django worker -E --without-heartbeat --without-gossip --without-mingle

@@ -15,3 +15,5 @@ WORKDIR /usr/src/scraper/remind_me_scraper
 RUN ["apt-get", "update"]
 RUN ["apt-get", "install", "-y", "vim-tiny"]
 
+CMD scrapyd
+
