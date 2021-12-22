@@ -3,11 +3,12 @@ version: "3.3"
 
 services:
   web:
-    build: .\web
+    build: .\web\remind_me_django\
     # command: python manage.py runserver 0.0.0.0:8000
-    command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
+    # command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
+    command: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT 
     volumes:
-      - .\web:/usr/src/remindme_web
+      - .\web\remind_me_django\:/usr/src/remind_me_django/
     ports: 
       - 8000:8000
     depends_on:
@@ -26,20 +27,24 @@ services:
       - web
     
   celery-worker:
-    build: .\default\python\
-    command: celery -A remind_me_django worker --uid=nobody --gid=nogroup --without-heartbeat --without-gossip --without-mingle
+    restart: always
+    build: .\web\remind_me_django\
+    # --uid=nobody --gid=nogroup
+    command: celery -A remind_me_django worker -E --without-heartbeat --without-gossip --without-mingle
     volumes:
-      - .\web\remind_me_django\:/usr/src/app/
+      - .\web\remind_me_django\:/usr/src/remind_me_django/
+
     depends_on:
       - redis
       - web
       - scrapy
 
   celery-beat:
-    build: .\default\python\
-    command: celery -A remind_me_django beat --uid=nobody --gid=nogroup --max-interval 1800
+    restart: always
+    build: .\web\remind_me_django\
+    command: celery -A remind_me_django beat --max-interval 1800
     volumes:
-      - .\web\remind_me_django\:/usr/src/app/
+      - .\web\remind_me_django\:/usr/src/remind_me_django/
     depends_on:
       - redis
       - celery-worker
