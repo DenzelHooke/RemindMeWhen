@@ -136,11 +136,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+# Django will look in all 'static' folders within apps.
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
+# This is the location where django will put static files once we run collectstatic.
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# Alternative diirectories we can tell django to look in for static files.
+# STATICFILES_DIRS = [
+#     os.path.join(BASE_DIR, 'static'),
+# ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Default primary key field type
@@ -170,6 +175,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_USER')
 EMAIL_HOST_PASSWORD = config('APP_PASSWORD')
 
+# When we run collect static, all of the static files will go into our static folider with base_dir
+# and AWS will automatically put them within the AWS_LOCATION folder in the AWS bucket.
 
 # Boto 3
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

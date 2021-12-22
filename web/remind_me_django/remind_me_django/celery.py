@@ -41,7 +41,7 @@ app.autodiscover_tasks()
 try:
     @app.on_after_configure.connect
     def setup_periodic_tasks(sender, **kwargs):
-        sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X')
+        # sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X') 
         sender.add_periodic_task(timedelta(minutes=5), scrape_proxies.s(), name='scrape_free_proxies')
 
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
