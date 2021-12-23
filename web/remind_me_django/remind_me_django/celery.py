@@ -10,15 +10,18 @@ import redis
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
 django.setup()
+from decouple import config
 from django.core.mail import send_mail
 from listings.models import Product
 from celery import Celery
 from .task_funcs import ScraperUtilz, update_prod_last_updated, scrape_https_proxies
 from .email_stuff import Product_Email
 
-
-
-r = redis.Redis(host='redis', port=6379, db=0)
+r = redis.Redis(
+    host=config('REDIS_HOST'), 
+    password=config('REDIS_PASS'), 
+    port=config('REDIS_PORT'), 
+    db=0)
 scrapyd_api_url = 'http://scrapy:8080'
 app = Celery('remind_me_django')
 

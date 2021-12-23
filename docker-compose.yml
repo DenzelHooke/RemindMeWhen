@@ -3,53 +3,42 @@ version: "3.3"
 
 services:
   web:
-    build: .\web\remind_me_django\
+    build:
+      context: .\web\remind_me_django\
+      dockerfile: Dockerfile.web
     # command: python manage.py runserver 0.0.0.0:8000
-    # command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
-    command: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT 
+    command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
+    # command: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT 
     volumes:
       - .\web\remind_me_django\:/usr/src/remind_me_django/
     ports: 
       - 8000:8000
-    depends_on:
-      - redis
+    container_name: web
 
   scrapy:
-    build: .\scraper
+    build:
+      context: .\scraper\
+      dockerfile: Dockerfile.scraper
     command: scrapyd
-    volumes:
-      - .\scraper\:/usr/src/scraper/
-      - .\scraper\etc\scrapyd\:/etc/scrapyd
+    # volumes:
+    #   - .\scraper\:/usr/src/scraper/
+    #   - .\scraper\etc\scrapyd\:/etc/scrapyd
     ports: 
       - 8080:8080
+    container_name: scrapy
     depends_on:
-      - redis
       - web
+      
     
-  celery-worker:
+  celery:
     restart: always
-    build: .\web\remind_me_django\
+    build: 
+      context: .\web\remind_me_django
+      dockerfile: Dockerfile.celery
     # --uid=nobody --gid=nogroup
-    command: celery -A remind_me_django worker -E --without-heartbeat --without-gossip --without-mingle
-    volumes:
-      - .\web\remind_me_django\:/usr/src/remind_me_django/
-
+    # volumes:
+    #   - .\web\remind_me_django\:/usr/src/remind_me_django/
+    container_name: celery
     depends_on:
-      - redis
       - web
       - scrapy
-
-  celery-beat:
-    restart: always
-    build: .\web\remind_me_django\
-    command: celery -A remind_me_django beat --max-interval 1800
-    volumes:
-      - .\web\remind_me_django\:/usr/src/remind_me_django/
-    depends_on:
-      - redis
-      - celery-worker
-
-  redis:
-    image: redis:6.2.6-bullseye
-    ports:
-      - 8083:6379

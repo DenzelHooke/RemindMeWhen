@@ -4,6 +4,7 @@ import logging
 
 import json
 import redis
+from decouple import config
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -18,7 +19,11 @@ from dateutil import parser
 
 
 logging.basicConfig(level=logging.DEBUG)
-r = redis.Redis(host='redis', port=6379, db=0)
+r = redis.Redis(
+    host=config('REDIS_HOST'), 
+    password=config('REDIS_PASS'), 
+    port=config('REDIS_PORT'), 
+    db=0)
 
 def slowdown_detected(slowdown, request):
     """Runs if a slowdown is detected from the celery auto updater.
