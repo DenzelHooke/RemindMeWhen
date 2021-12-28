@@ -1,13 +1,14 @@
+import os
 import re
 from datetime import datetime as dt, timedelta
 import random 
 import sys
-sys.path.append("remindme_scraper/remind_me_scraper")
+# sys.path.append("remindme_scraper/remind_me_scraper")
 # find a better way for production ^^
 
 import scrapy
 from ..items import ProductItem
-from ..item_loaders import ProductLoader
+from .. item_loaders import ProductLoader
 import pytz
 import redis
 
@@ -28,16 +29,17 @@ import redis
 # Currently unavailable.
 # In stock on
 
-
-r = redis.Redis(host='redis', port=6379, db=0)
-
-
+# job = project.jobs.run(
+#     'listings_spider',
+#     job_args={
+#     'uuid':uuid,
+#     'user_email':email,
+#     'URL':url}
+#     )
 class ListingsSpider(scrapy.Spider):
-
-    
-    def __init__(self, user_email, URL, optional_product_name=None, uuid=None, *args, **kwargs):
+    def __init__(self, user_email, URL, uuid, optional_product_name=None):
         self.user_email = user_email
-        print(f"DEBUG: {self.user_email}")
+        # print(f"DEBUG: {self.user_email}")
 
         # User input
         self.optional_product_name = optional_product_name
@@ -77,7 +79,7 @@ class ListingsSpider(scrapy.Spider):
                 page.xpath("//div[@id='corePrice_feature_div']//span[@class='a-offscreen']/text()").extract()
             ]
 
-            
+            # Had to change this code to pythons.7 compatiable due ot scraping hub being 2.7
             print(f"STOCK_LIST: {stock_list}")
             print(f"PRICE_LIST: {price_list}")
 

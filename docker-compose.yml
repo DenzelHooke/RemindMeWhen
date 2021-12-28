@@ -6,8 +6,8 @@ services:
     build:
       context: .\web\remind_me_django\
       dockerfile: Dockerfile.web
-    # command: python manage.py runserver 0.0.0.0:8000
-    command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
+    command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn --bind :8000 --workers 3 remind_me_django.wsgi:application
     # command: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT 
     volumes:
       - .\web\remind_me_django\:/usr/src/remind_me_django/
@@ -19,15 +19,13 @@ services:
     build:
       context: .\scraper\
       dockerfile: Dockerfile.scraper
-    command: scrapyd
+      
     # volumes:
     #   - .\scraper\:/usr/src/scraper/
     #   - .\scraper\etc\scrapyd\:/etc/scrapyd
     ports: 
       - 8080:8080
     container_name: scrapy
-    depends_on:
-      - web
       
     
   celery:

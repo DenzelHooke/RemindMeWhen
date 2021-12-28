@@ -9,17 +9,23 @@ from twisted.internet.error import TCPTimedOutError, TimeoutError
 from scrapy.core.downloader.handlers.http11 import TunnelError
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
-import base64
-import redis
+import os
+import time
 import random
 import logging
-import time
-from .settings import USER_AGENTS
+import base64
 
+from itemadapter import is_item, ItemAdapter
+import redis
+# from decouple import config
+from .settings import USER_AGENTS, REDIS_PORT, REDIS_HOST, REDIS_PASS
 
-
-r = redis.Redis(host='redis', port=6379, db=0)
+r = redis.Redis(
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT, 
+    db=0)
+    
 class NoProxiesAvailable(Exception):
     def __init__(self, message='No proxies available!'):
         super().__init__(self, message)
@@ -144,6 +150,7 @@ class TestProxyRejectMiddleware(RetryMiddleware):
         
 class RandomUserAgentMiddleware():
     def process_request(self, request, spider):
+        print("USER AGENT MIDDLEWARE")
         request.dont_filter = True
         ua = random.choice(USER_AGENTS)
         request.headers.setdefault('User-Agent', ua)
@@ -178,27 +185,30 @@ class ProxyMiddleware:
     def process_exception(self, request, exception, spider):
         # Retry scrape if any of these exceptions are met.
         print('--- EXCEPTION MIDDLEWARE HIT ---')
-        if isinstance(exception, TypeError):
-            print('TYPE ERROR')
+        # if isinstance(exception, TypeError):
+        #     print('TYPE ERROR')
 
-            bad_proxy = request.meta['proxy']
-            error_count = r.get(f'{bad_proxy}-fail-count')
-            # Checks if there's been a previous error with this proxy
-            if error_count:
-                r.set(f'{bad_proxy}-fail-count', int(error_count)+1)
+        #     bad_proxy = request.meta['proxy']
+        #     error_count = r.get(f'{bad_proxy}-fail-count')
+        #     # Checks if there's been a previous error with this proxy
+        #     if error_count:
+        #         r.set(f'{bad_proxy}-fail-count', int(error_count)+1)
 
-            else:
-                r.set(f'{bad_proxy}-fail-count', 1)
+        #     else:
+        #         r.set(f'{bad_proxy}-fail-count', 1)
 
-            # Store proxy within ban list
+        #     # Store proxy within ban list
 
-            if int(r.get(f'{bad_proxy}-fail-count')) == ProxyMiddleware.error_limit:
-                r.lpush('bad_proxies', bad_proxy)
-                # r.set('bad_proxy_last_used', 'None')
-                r.delete(f'{bad_proxy}-fail-count')
+        #     if int(r.get(f'{bad_proxy}-fail-count')) == ProxyMiddleware.error_limit:
+        #         r.lpush('bad_proxies', bad_proxy)
+        #         # r.set('bad_proxy_last_used', 'None')
+        #         r.delete(f'{bad_proxy}-fail-count')
                  
-            print(f'Bad proxy detected: {bad_proxy}')
+        #     print(f'Bad proxy detected: {bad_proxy}')
 
-            time.sleep(3)
+        #     time.sleep(3)
             # return request
 
+class SlowdownRequestMiddleware:
+    def process_request(self, request, spider):
+        time.sleep(random.randint(3, 6))

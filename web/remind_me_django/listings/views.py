@@ -1,6 +1,6 @@
 import time
 import logging
-
+import os
 
 import json
 import redis
@@ -18,12 +18,17 @@ from datetime import datetime as dt, timedelta
 from dateutil import parser
 
 
+
 logging.basicConfig(level=logging.DEBUG)
-r = redis.Redis(
-    host=config('REDIS_HOST'), 
-    password=config('REDIS_PASS'), 
-    port=config('REDIS_PORT'), 
-    db=0)
+
+pool = redis.ConnectionPool(
+    host=os.environ.get('REDIS_HOST'), 
+    password=os.environ.get('REDIS_PASS'), 
+    port=os.environ.get('REDIS_PORT'), 
+    db=os.environ.get('REDIS_DB_NUM')
+    )
+r = redis.Redis(connection_pool=pool)
+
 
 def slowdown_detected(slowdown, request):
     """Runs if a slowdown is detected from the celery auto updater.
@@ -159,9 +164,9 @@ def listing_add(request):
                 else:
                     logging.debug("--scraper add view--")
                     # Runs the code that spawns a scrapyd process.
-                    scraper = ScraperUtilz()
-                    scraper.scrapyd_first_run(request, product_form.save(commit=False))
-                    scraper.wait_till_finished(1)
+                    scraper = ScraperUtilz(state='production')
+                    scraper.scrapinghub_first_run(request, product_form.save(commit=False))
+                    scraper.wait_till_finished(1, state='prod')
                     try:
                         create_product(user, scraper)
                         newest_listing = Product.objects.filter(author=user).latest('date_added')

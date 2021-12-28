@@ -9,15 +9,23 @@ from twisted.internet.error import TCPTimedOutError, TimeoutError
 from scrapy.core.downloader.handlers.http11 import TunnelError
 
 # useful for handling different item types with a single interface
-from itemadapter import is_item, ItemAdapter
-import base64
-import redis
+import os
+import time
 import random
 import logging
-import time
-from .settings import USER_AGENTS
+import base64
 
-r = redis.Redis(host='redis', port=6379, db=0)
+from itemadapter import is_item, ItemAdapter
+import redis
+# from decouple import config
+from .settings import USER_AGENTS, REDIS_PORT, REDIS_HOST, REDIS_PASS
+
+r = redis.Redis(
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT, 
+    db=0)
+    
 class NoProxiesAvailable(Exception):
     def __init__(self, message='No proxies available!'):
         super().__init__(self, message)
@@ -203,4 +211,4 @@ class ProxyMiddleware:
 
 class SlowdownRequestMiddleware:
     def process_request(self, request, spider):
-        time.sleep(random.randint(5, 11))
+        time.sleep(random.randint(3, 6))

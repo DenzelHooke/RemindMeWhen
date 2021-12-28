@@ -1,4 +1,8 @@
+import os
+
+
 # Scrapy settings for remind_me_scraper project
+
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -12,7 +16,14 @@ BOT_NAME = 'remind_me_scraper'
 SPIDER_MODULES = ['remind_me_scraper.spiders']
 NEWSPIDER_MODULE = 'remind_me_scraper.spiders'
 
+os.environ['REDIS_HOST'] = 'redis-16583.c84.us-east-1-2.ec2.cloud.redislabs.com'
+os.environ['REDIS_PASS'] = 'WpuQ60Fb6hE9OcBSZiSIOa3K2tYK7Zxd'
+os.environ['REDIS_PORT'] = '16583'
+os.environ['REDIS_DB_NUM'] = '0'
 
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PASS')
+REDIS_PASS = os.environ.get('REDIS_PORT')
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'remind_me_scraper (+http://www.yourdomain.com)'
 
@@ -56,11 +67,10 @@ SPIDER_MIDDLEWARES = {
 # PROXY_POOL_ENABLED = True
 
 DOWNLOADER_MIDDLEWARES = {
+   'remind_me_scraper.middlewares.SlowdownRequestMiddleware': 100,
    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
    'remind_me_scraper.middlewares.RandomUserAgentMiddleware': 200,
-   'remind_me_scraper.middlewares.ProxyMiddleware': 250,
-   # 'scrapy_proxy_pool.middlewares.ProxyPoolMiddleware': 610,
-   # 'scrapy_proxy_pool.middlewares.BanDetectionMiddleware': 620,
+
 
 }
 

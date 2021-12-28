@@ -11,3 +11,8 @@ docker-compose:
 scraper:
     ports:
         - 8080:8080
+
+
+scraping hub:
+
+I simply deployed my project to scraping hub. Don't forget to pip install itemloaders :)

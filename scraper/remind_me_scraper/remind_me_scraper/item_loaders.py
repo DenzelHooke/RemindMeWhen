@@ -1,11 +1,13 @@
+import sys
+sys.path.append("remindme_scraper/remind_me_scraper")
 from itemloaders.processors import Identity, MapCompose, TakeFirst, Join
 from w3lib.html import remove_tags
 from scrapy.loader import ItemLoader 
 
 # ---- Input Processors ----
-
+ 
 def join_url(rel_url):
-    return f"https://www.amazon.com{rel_url}"
+    return "https://www.amazon.com{rel_url}".format(rel_url=rel_url)
 
 def str_to_float(string):
     return float(string)

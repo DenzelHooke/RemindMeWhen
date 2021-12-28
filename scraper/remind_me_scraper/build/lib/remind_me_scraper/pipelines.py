@@ -1,6 +1,10 @@
 import json
+import os
 import redis
-from django.forms.widgets import URLInput
+from decouple import config
+from .settings import REDIS_HOST, REDIS_PASS, REDIS_PORT
+# from django.forms.widgets import URLInput
+# useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
 # Define your item pipelines here
@@ -8,14 +12,24 @@ from itemadapter import ItemAdapter
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
+os.environ['REDIS_HOST'] = 'redis-16583.c84.us-east-1-2.ec2.cloud.redislabs.com'
+os.environ['REDIS_PASS'] = 'WpuQ60Fb6hE9OcBSZiSIOa3K2tYK7Zxd'
+os.environ['REDIS_PORT'] = '16583'
+os.environ['REDIS_DB_NUM'] = '0'
 
-# useful for handling different item types with a single interface
+pool = redis.ConnectionPool(
+    host=os.environ.get('REDIS_HOST'), 
+    password=os.environ.get('REDIS_PASS'), 
+    port=os.environ.get('REDIS_PORT'), 
+    db=os.environ.get('REDIS_DB_NUM')
+    )
+r = redis.Redis(connection_pool=pool)
 
 
 class RemindMeScraperPipeline:
+    # Had a problem where I added item as a param and that caused the spider to fail
     def open_spider(self, spider):
-        self.r = redis.Redis(host='redis', port=6379, db=0)
-        self.r.set('open_spider', 1)
+        r.set('open_spider', 1)
         print("Spider Opened")
 
     def process_item(self, item, spider):
@@ -23,8 +37,8 @@ class RemindMeScraperPipeline:
         item = dict(item)
         uuid = item['uuid']
         json_response = json.dumps(item)
-        self.r.set(uuid, json_response)
-        self.r.expire(uuid, 15)
+        r.set(uuid, json_response)
+        r.expire(uuid, 30)
         return item
 
 

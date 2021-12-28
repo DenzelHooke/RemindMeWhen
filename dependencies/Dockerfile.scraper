@@ -1,0 +1,16 @@
+FROM python:3.9
+
+ENV PYTHONUNBUFFERED=1
+RUN export PYTHONPATH=/usr/src/remind_me_scraper/
+WORKDIR /usr/src/remind_me_scraper
+
+COPY . .
+RUN pip install -r requirements.txt
+
+# RUN pip install git+https://github.com/scrapy/scrapyd-client.git
+
+WORKDIR /usr/src/remind_me_scraper
+RUN ["apt-get", "install", "-y", "nano"]
+
+CMD scrapyd
+
