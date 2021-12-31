@@ -16,6 +16,7 @@ from listings.models import Product
 from celery import Celery
 from .task_funcs import ScraperUtilz, update_prod_last_updated, scrape_https_proxies
 from .email_stuff import Product_Email
+from remind_me_django.settings import REDIS_HOST, REDIS_PORT, REDIS_PASS
 
 
 # pool = redis.ConnectionPool(
@@ -25,10 +26,13 @@ from .email_stuff import Product_Email
 #     db=os.environ.get('REDIS_DB_NUM')
 #     )
 
+
+# Create your tasks here
+
 pool = redis.ConnectionPool(
-    host=config('REDIS_HOST'), 
-    password=config('REDIS_PASS'), 
-    port=config('REDIS_PORT'),  
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT,  
     db=0
     )
 r = redis.Redis(connection_pool=pool)

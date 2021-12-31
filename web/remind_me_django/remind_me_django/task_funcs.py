@@ -6,12 +6,10 @@ from bs4 import BeautifulSoup
 from uuid import uuid4
 from scrapyd_api import ScrapydAPI
 from scrapinghub import ScrapinghubClient
+from .settings import SCRAPING_HUB_API, SCRAPING_HUB_PROJECT
 import django
 os.environ['DJANGO_SETTINGS_MODULE'] = 'remind_me_django.settings'
 django.setup()
-
-os.environ['SCRAPING_HUB_API_KEY'] = '135238cb1ab640638bec7dfd1427f58d'
-os.environ['SCRAPING_HUB_PROJECT'] = '575768'
 
 #  ScrapydAPI.schedule(project, spider, settings=None, **kwargs)
 
@@ -28,8 +26,8 @@ class ScraperUtilz:
             self.scrapyd_api_url = 'http://scrapy:8080'                  
             self._scrapyd_api = ScrapydAPI(ScraperUtilz.scrapyd_api_url)
         elif state == 'production':
-            self.__client = ScrapinghubClient(os.environ.get('SCRAPING_HUB_API_KEY'))
-            self.__project = self.__client.get_project(os.environ.get('SCRAPING_HUB_PROJECT'))
+            self.__client = ScrapinghubClient(SCRAPING_HUB_API)
+            self.__project = self.__client.get_project(SCRAPING_HUB_PROJECT)
 
         self._project_name:str = "remind_me_scraper"
         self.__job_id:str = None

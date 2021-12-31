@@ -23,20 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DJANGO_DEBUG')
+DEBUG = os.environ.get('DJANGO_DEBUG')
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS')
-CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 
 # Application definition
 
 INSTALLED_APPS = [
-    'account.apps.AccountConfig',
-    'listings.apps.ListingsConfig',
+    'account.apps.Accountos.environ.get',
+    'listings.apps.Listingsos.environ.get',
     'crispy_forms',
-    'layout.apps.LayoutConfig',
+    'layout.apps.Layoutos.environ.get',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -86,11 +86,11 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': config('DB_USER'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASS'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
+        'NAME': os.environ.get('DB_USER'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
    } 
     
 }
@@ -170,8 +170,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = config('APP_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('APP_PASSWORD')
 
 # When we run collect static, all of the static files will go into our static folider with base_dir
 # and AWS will automatically put them within the AWS_LOCATION folder in the AWS bucket.
@@ -180,10 +180,10 @@ EMAIL_HOST_PASSWORD = config('APP_PASSWORD')
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
-AWS_DEFAULT_ACL = config('AWS_DEFAULT_ACL')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age-86400'}
 # A path prefix that will be preprended to all uploads
@@ -194,3 +194,7 @@ STATC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_PORT = os.environ.get('REDIS_PORT')
 REDIS_PASS = os.environ.get('REDIS_PASS')
+
+# Scrapinghub
+SCRAPING_HUB_API = os .environ.get('SCRAPING_HUB_API')
+SCRAPING_HUB_PROJECT = os .environ.get('SCRAPING_HUB_PROJECT')

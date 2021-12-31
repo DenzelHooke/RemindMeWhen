@@ -10,13 +10,14 @@ from account.models import CustomUser
 from listings.models import Product
 from celery import shared_task, Celery
 from remind_me_django.task_funcs import  ScraperUtilz
+from remind_me_django.settings import REDIS_HOST, REDIS_PORT, REDIS_PASS
 
 # Create your tasks here
 
 pool = redis.ConnectionPool(
-    host=config('REDIS_HOST'), 
-    password=config('REDIS_PASS'), 
-    port=config('REDIS_PORT'),  
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT,  
     db=0
     )
 r = redis.Redis(connection_pool=pool)

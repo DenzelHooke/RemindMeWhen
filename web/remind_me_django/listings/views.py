@@ -17,6 +17,7 @@ import pytz
 from datetime import datetime as dt, timedelta
 from dateutil import parser
 from .tasks import create_product
+from remind_me_django.settings import REDIS_HOST, REDIS_PORT, REDIS_PASS
 
 
 
@@ -29,10 +30,11 @@ logging.basicConfig(level=logging.DEBUG)
 #     db=os.environ.get('REDIS_DB_NUM')
 #     )
 
+
 pool = redis.ConnectionPool(
-    host=config('REDIS_HOST'), 
-    password=config('REDIS_PASS'), 
-    port=config('REDIS_PORT'),  
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT,  
     db=0
     )
 r = redis.Redis(connection_pool=pool)
