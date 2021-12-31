@@ -45,7 +45,7 @@ class CustomUserManager(BaseUserManager):
 
 
 
-class User(AbstractBaseUser):
+class CustomUser(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=80,  unique=True)
 
     USERNAME_FIELD = 'email'

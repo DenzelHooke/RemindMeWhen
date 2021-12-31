@@ -17,27 +17,19 @@
                         Don't have an account yet?
                         <a href="{% url 'register-page' %}" class="ml-2">Create an account here</a>
                     </small>
-                    {% if field.errors %}
-                        <div class="field_errors">
-                            <p>Your username and password didn't match.</p>
-                        </div>
-                    {% endif %}
-                    {% for field in form.visible_fields %}
-                        {% if field.errors %}
-                            <div class="field-container field-container-error">
-                                <label class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                            </div>
-                        {% else %}
-                            <div class="field-container">
-                                <label class="form-label-light bold">{{ field.label }}</label>
-                                {{ field }}
-                            </div>
+                    <ul class="errorlist">
+                        {% if form.errors %}
+                            <li>We couldn't find an account with that email and password</li>
                         {% endif %}
-                        <div class="field_error">
-                            {{ field.errors }}
-                        </div>
-                    {% endfor %}
+                    </ul>
+                    <div class="field-container">
+                        <label class="form-label-light bold">{{ form.username.label }}</label>
+                        {{ form.username }}
+                    </div>
+                    <div class="field-container">
+                        <label class="form-label-light bold">{{ form.password.label }}</label>
+                        {{ form.password }}
+                    </div>
                 </fieldset>
                 <div class="btn-group">
                     <button class="button button-signup mb-4" type="submit">Continue</button>

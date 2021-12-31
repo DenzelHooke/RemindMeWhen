@@ -207,7 +207,7 @@ body{
 
 .errorlist li{
     padding: 10px;
-    margin-bottom: 15px;
+    margin: 10px 0;
     border-radius: 3px;
     background: var(--error_bg);
     text-align: center;     
