@@ -17,17 +17,29 @@ from celery import Celery
 from .task_funcs import ScraperUtilz, update_prod_last_updated, scrape_https_proxies
 from .email_stuff import Product_Email
 
-r = redis.Redis(
+
+# pool = redis.ConnectionPool(
+#     host=os.environ.get('REDIS_HOST'), 
+#     password=os.environ.get('REDIS_PASS'), 
+#     port=os.environ.get('REDIS_PORT'), 
+#     db=os.environ.get('REDIS_DB_NUM')
+#     )
+
+pool = redis.ConnectionPool(
     host=config('REDIS_HOST'), 
     password=config('REDIS_PASS'), 
-    port=config('REDIS_PORT'), 
-    db=0)
-scrapyd_api_url = 'http://scrapy:8080'
+    port=config('REDIS_PORT'),  
+    db=0
+    )
+r = redis.Redis(connection_pool=pool)
+
+
+# scrapyd_api_url = 'http://scrapy:8080'
 app = Celery('remind_me_django')
 
 # 5 min
 time_to_run = 300
-minute_to_check = 10
+minute_to_check = 2
 # time_to_check = timedelta(minutes=5).total_seconds
 
 
@@ -44,8 +56,10 @@ app.autodiscover_tasks()
 try:
     @app.on_after_configure.connect
     def setup_periodic_tasks(sender, **kwargs):
-        # sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X') 
-        sender.add_periodic_task(timedelta(minutes=5), scrape_proxies.s(), name='scrape_free_proxies')
+        sender.add_periodic_task(time_to_run, check_for_updates.s(), name='check DB every X') 
+        # sender.add_periodic_task(timedelta(minutes=5), scrape_proxies.s(), name='scrape_free_proxies'
+        pass
+    
 
 except ConnectionError("Connection Error on elephant SQL, slow down celery task!"):
     print("SQL ELEPHANT Connection Error")
@@ -79,7 +93,7 @@ def check_for_updates():
             try: 
                 if diff.total_seconds() / 60 >= minute_to_check:
                     print(f'db_periodic_checker: Product: {product.name[:20]} Last checked: {diff.total_seconds() / 60} minutes ago.')
-                    scraper = ScraperUtilz()
+                    scraper = ScraperUtilz(state='production')
                     
                     # Check if the db count exists
                     if r.get("check_DB_error_count"):
@@ -94,9 +108,13 @@ def check_for_updates():
                             r.expire("check_DB_slowdown", db_slowdown_ttl)
                             break
                     try:
-                        time.sleep(4)
-                        scraper.scrapyd_update_run(author, product)
-                        scraper.wait_till_finished(1)
+                        time.sleep(2)
+                        product_form = {
+                            'url': product.url,
+                            'name': product.name,
+                        }
+                        scraper.scrapinghub_first_run(author.email, product_form)
+                        scraper.wait_till_finished(1, state="production")
                         new_product_data = json.loads(r.get(scraper.uuid))
                     except Exception as e:
                         print(e)
@@ -114,7 +132,7 @@ def check_for_updates():
                     old_prod_price = product.price
                     product_email = Product_Email(product, new_product_data)
                     
-                    # If new_price doesn't match up with current price and it's in stock
+                    # If new_price doesn't match up with current price and it's in stockl. Most common outcome.
                     if new_prod_price != old_prod_price and new_product_data['stock']:
                         
                         # Updated current product price with new price
@@ -126,7 +144,7 @@ def check_for_updates():
                         price_diff = product_email.price_diff
 
                         if price_diff > 0:
-                            # new prod price has decreased
+                            # new product price has decreased
                             if not product.stock:
                                 # If the product is currently out of stock, send an in stock & price decrease email
                                 product_email.send_in_stock_price_decrease()
@@ -140,12 +158,15 @@ def check_for_updates():
                             # price has increased
 
                             if not old_prod_price:
-                                # If there is no
+                                # If there is no price, (product was out of stock previously)
                                 product_email.send_in_stock_email()
-                        
-                            # product_email.send_price_increase_email()
-                            # print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
-                            # print(f'db_periodic_checker: Email sent to "{product.author.email}"')
+
+                            # There was an old price on the product, so just send a price increase email.
+
+                            # Commented out by default since people usually don't want a price increase notfication. Add a front end user option to change this.
+                            product_email.send_price_increase_email()
+                            print(f'db_periodic_checker: Product: "{product.name[:20]}" updated')
+                            print(f'db_periodic_checker: Email sent to "{product.author.email}"')
 
                     elif new_prod_price != old_prod_price and not new_product_data['stock']:
                         # If current product was out of stock before the scrape then the product price is only updated.

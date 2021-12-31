@@ -17,6 +17,11 @@
                         Don't have an account yet?
                         <a href="{% url 'register-page' %}" class="ml-2">Create an account here</a>
                     </small>
+                    {% if field.errors %}
+                        <div class="field_errors">
+                            <p>Your username and password didn't match.</p>
+                        </div>
+                    {% endif %}
                     {% for field in form.visible_fields %}
                         {% if field.errors %}
                             <div class="field-container field-container-error">

@@ -8,6 +8,7 @@
     
     --navbar_bg: rgb(51, 51, 51);
     --nav_text: rgb(224, 224, 224);
+    --navbar_height: 65px;
 
     --text_placeholder_color: rgb(206, 206, 206);
     --input_border_color: rgba(0, 0, 0, 0.411);
@@ -63,14 +64,14 @@ body{
 }
 
 .navbar{
-    position: fixed;
+    position: sticky;
     top: 0;
     left: 0;
     right: 0;
     display: grid;  
     background: var(--navbar_bg);
     grid-template-columns: 20px 0.5fr 100px 0.5fr 20px;
-    min-height: 60px;
+    height: var(--navbar_height);
     color: var(--nav_text);
     border-bottom: 1px rgba(24, 24, 24, 0.89) solid;
     z-index: 800;
@@ -267,6 +268,10 @@ input {
 
 .pagination-wrapper ul li {
     margin-left: 10px;
+}
+
+.alert {
+    margin: 0;
 }
 /* BASE */
 

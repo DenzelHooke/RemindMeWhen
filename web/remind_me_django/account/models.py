@@ -45,7 +45,7 @@ class CustomUserManager(BaseUserManager):
 
 
 
-class CustomUser(AbstractBaseUser):
+class User(AbstractBaseUser):
     email = models.EmailField(verbose_name='email', max_length=80,  unique=True)
 
     USERNAME_FIELD = 'email'
@@ -67,7 +67,9 @@ class CustomUser(AbstractBaseUser):
         return True
 
     def has_module_perms(self, app_label):
-        """Does the user have permissions to view the app `app_label`?"""
+        """
+        Does the user have permissions to view the app app_label?
+        """
         return True
     
     def get_name(self):

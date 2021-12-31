@@ -12,6 +12,7 @@
     padding-left: 0;
     margin: 0;
     max-width: 100%;
+    padding-top: 0;
 }
 
 .sidebar-outside-wrapper{
@@ -25,7 +26,7 @@
     flex-shrink: 0;
     width: var(--sidebar_width);
     background: var(--sidebar_bg);
-    height: calc(100vh - 65.1px);
+    height: calc(100vh - var(--navbar_height));
     border-right: 1px solid rgb(224, 224, 224);
     overflow: hidden;
     transition: width 1s cubic-bezier(0.35, 0.68, 0.79, 0.9);

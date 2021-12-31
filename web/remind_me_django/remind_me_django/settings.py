@@ -189,3 +189,8 @@ AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age-86400'}
 # A path prefix that will be preprended to all uploads
 AWS_LOCATION = 'static'
 STATC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+
+# REDIS
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_PASS = os.environ.get('REDIS_PASS')

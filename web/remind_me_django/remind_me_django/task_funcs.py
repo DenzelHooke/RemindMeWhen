@@ -73,6 +73,34 @@ class ScraperUtilz:
 
         return self.__job_id, self._scrapyd_api, self._project_name
 
+    def scrapinghub_update_run(self, user, product):
+        """
+        A function that takes a user email and a product object and spawns
+        a scrapyd process which runs a crawl on the specified URL passed from the Product object.
+
+        Arguments:
+            user {object} -- A django user object\n
+            product {object} -- A django product lisiting object
+
+        Returns:
+            self.__job_id {str} -- Job ID of the scrapyd process\n
+            self._scrapyd_api {object} -- Scrapyd api object\n
+            self._project_name {str} -- scrapyd project name\n
+        """
+
+        # returns job id
+        self.__job_id = self._scrapyd_api.schedule(
+            self._project_name, 
+            spider=self._spider_name,  
+            # user_email must be a tuple or we get an "object not iterable" error when passing it to our spider.
+            user_email=(user.email,),
+            optional_product_name=product.name,
+            URL=product.url,
+            uuid=self.__uuid
+            )
+
+        return self.__job_id, self._scrapyd_api, self._project_name
+
     def scrapyd_first_run(self, request, product):
         """
         A function that takes a Django request object and a Django model product object and spawns
@@ -110,7 +138,7 @@ class ScraperUtilz:
         job_status = self._scrapyd_api.job_status(self._project_name, self.__job_id)
         return job_status
 
-    def wait_till_finished(self, time_to_poll=1, state='dev'):
+    def wait_till_finished(self, time_to_poll=1, state='dev', limit=None):
         """
         Blocks until scrapyd.job_status returns "finished". 
         Once "finished" is received, the function stops blocking.
@@ -124,12 +152,15 @@ class ScraperUtilz:
         """
         flag = False
         count = 0
-        time_limit = 30
+        if limit:
+            time_limit = limit
+        else:
+            time_limit = 35
 
         while not flag:
             if state == 'dev':
                 job_status = self._scrapyd_api.job_status(self._project_name, self.__job_id)
-            elif state == 'prod':
+            elif state == 'production':
                 job_status = self.scrapinghub_get_job_status()
             if job_status != "finished":
                 print(f"Job status: {job_status}")
@@ -153,13 +184,14 @@ class ScraperUtilz:
                 print(f"--Job status: {job_status}!--")
                 break
     
-    def scrapinghub_first_run(self, request, product_form):
+    def scrapinghub_first_run(self, user, product_form, product_name=None):
+        
         job = self.__project.jobs.run(
             self._spider_name,  
             job_args={
-                'user_email':(request.user,),
-                'optional_product_name':product_form.name,
-                'URL':product_form.url,
+                'user_email':(user,),
+                'optional_product_name':product_form['name'],
+                'URL':product_form['url'],
                 'uuid':self.__uuid
             }
         )

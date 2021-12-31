@@ -16,16 +16,24 @@ from remind_me_django.task_funcs import ScraperUtilz
 import pytz
 from datetime import datetime as dt, timedelta
 from dateutil import parser
+from .tasks import create_product
 
 
 
 logging.basicConfig(level=logging.DEBUG)
 
+# pool = redis.ConnectionPool(
+#     host=os.environ.get('REDIS_HOST'), 
+#     password=os.environ.get('REDIS_PASS'), 
+#     port=os.environ.get('REDIS_PORT'), 
+#     db=os.environ.get('REDIS_DB_NUM')
+#     )
+
 pool = redis.ConnectionPool(
-    host=os.environ.get('REDIS_HOST'), 
-    password=os.environ.get('REDIS_PASS'), 
-    port=os.environ.get('REDIS_PORT'), 
-    db=os.environ.get('REDIS_DB_NUM')
+    host=config('REDIS_HOST'), 
+    password=config('REDIS_PASS'), 
+    port=config('REDIS_PORT'),  
+    db=0
     )
 r = redis.Redis(connection_pool=pool)
 
@@ -62,34 +70,19 @@ def user_slowdown_detected(slowdown, request, initial_ttl):
     slowdown_date = parser.parse(slowdown)
     utc_now = pytz.utc.localize(dt.utcnow())
     logging.debug(slowdown)
+    # Time until slowdown is complete
     time_until_avail = utc_now - slowdown_date
     time_until_avail = initial_ttl - time_until_avail.total_seconds()
 
 
     logging.warning(f"user: {request.user} is on a temp slowdown")
     #send flash message informing user
-    if initial_ttl > 60:
+    if initial_ttl >= 60:
         # convert to minutes
         initial_ttl = initial_ttl / 60
         messages.warning(request, f"Please try again shortly in {int(initial_ttl)} minutes.")
     else:
         messages.warning(request, f"Please try again shortly in {int(time_until_avail)} seconds.")
-
-def create_product(user, scraper):
-    """Creates a product row.
-
-    Args:
-        user (user object): Django lazy user object.
-        scraper (object): A scraper object instance.
-    """
-    prod = json.loads(r.get(scraper.uuid))
-    Product.objects.create(
-        author=user,
-        name=prod['name'],
-        price=prod['price'],
-        stock=prod['stock'],
-        url=prod['url']
-    )
 
 def manage_temp_ban(user, temp_ban_count_ttl):
     """Creates or incrmenets a temp ban for the user. 
@@ -119,8 +112,7 @@ def manage_temp_ban(user, temp_ban_count_ttl):
             f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}",
             count_ttl,
             int(user_error_count)+1)
-
-
+# Put functions within a different utility file.
 
 @login_required
 def listing_add(request):
@@ -162,21 +154,24 @@ def listing_add(request):
                         r.setex(f"TEMP-USER-BLOCK:{user.email}", temp_ban_key_ttl, str(utc_now))
 
                 else:
+                    # Runs spider
                     logging.debug("--scraper add view--")
                     # Runs the code that spawns a scrapyd process.
-                    scraper = ScraperUtilz(state='production')
-                    scraper.scrapinghub_first_run(request, product_form.save(commit=False))
-                    scraper.wait_till_finished(1, state='prod')
-                    try:
-                        create_product(user, scraper)
-                        newest_listing = Product.objects.filter(author=user).latest('date_added')
+                    # scraper.wait_till_finished(1, state='prod')
+                        # Runs a background celery task which scrapes and adds the product data
+                    product_form = product_form.save(commit=False)
+                    prod_form = {
+                        'name': product_form.name,
+                        'url': product_form.url,
+                    }
+                    create_product.delay(
+                        str(request.user), 
+                        prod_form, 
+                        temp_ban_count_ttl
+                    )
+                    messages.warning(request, f"As long as the scrape was succesful, please return back to this page within 15-20 seconds to view your product data.")
+                    return redirect('listing-home-page')
 
-                        # Renders the detail view 
-                        return redirect('listing-detail', pk=newest_listing.pk)
-                    except TypeError:
-                        # There was most likely a key error (Redis key wasn't created due to page not being found)
-                        manage_temp_ban(user, temp_ban_count_ttl)
-                        messages.warning(request, f"Sorry, that Amazon page couldn't be found at this time.")
     
     product_form = ProductCreationForm()
     template = "listings/listing_landing.html"
@@ -184,12 +179,12 @@ def listing_add(request):
     context['sidebar'] = True
     context['form'] = product_form
 
-    # If t
+    # IF TEMP BAN ALREADY EXISTS, SET THE SLOWDOWN
     if r.get(f"TEMP-USER-BLOCK:{user.email}"):
         context['temp_user_block'] = True
         user_slowdown_detected(r.get(f"TEMP-USER-BLOCK:{user.email}"), request, temp_ban_key_ttl)
-    else:
-        context['temp_user_block'] = False
+    # else:
+    #     context['temp_user_block'] = False
 
     return render(request, template, context)
 
@@ -203,7 +198,6 @@ class ProductListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self, *args,  **kwargs):
         queryset = Product.objects.filter(author=self.request.user)
-        
         # print(queryset)
         return queryset
     
