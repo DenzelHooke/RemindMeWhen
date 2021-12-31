@@ -16,11 +16,6 @@ BOT_NAME = 'remind_me_scraper'
 SPIDER_MODULES = ['remind_me_scraper.spiders']
 NEWSPIDER_MODULE = 'remind_me_scraper.spiders'
 
-os.environ['REDIS_HOST'] = 'redis-16583.c84.us-east-1-2.ec2.cloud.redislabs.com'
-os.environ['REDIS_PASS'] = 'WpuQ60Fb6hE9OcBSZiSIOa3K2tYK7Zxd'
-os.environ['REDIS_PORT'] = '16583'
-os.environ['REDIS_DB_NUM'] = '0'
-
 REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_PORT = os.environ.get('REDIS_PASS')
 REDIS_PASS = os.environ.get('REDIS_PORT')
@@ -67,11 +62,10 @@ SPIDER_MIDDLEWARES = {
 # PROXY_POOL_ENABLED = True
 
 DOWNLOADER_MIDDLEWARES = {
+   'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
    'remind_me_scraper.middlewares.SlowdownRequestMiddleware': 100,
    'scrapy.downloadermiddlewares.useragent.UserAgentMiddleware': None,
    'remind_me_scraper.middlewares.RandomUserAgentMiddleware': 200,
-
-
 }
 
 

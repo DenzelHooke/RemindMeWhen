@@ -12,16 +12,11 @@ from itemadapter import ItemAdapter
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
-os.environ['REDIS_HOST'] = 'redis-16583.c84.us-east-1-2.ec2.cloud.redislabs.com'
-os.environ['REDIS_PASS'] = 'WpuQ60Fb6hE9OcBSZiSIOa3K2tYK7Zxd'
-os.environ['REDIS_PORT'] = '16583'
-os.environ['REDIS_DB_NUM'] = '0'
-
 pool = redis.ConnectionPool(
     host=os.environ.get('REDIS_HOST'), 
     password=os.environ.get('REDIS_PASS'), 
     port=os.environ.get('REDIS_PORT'), 
-    db=os.environ.get('REDIS_DB_NUM')
+    db=0
     )
 r = redis.Redis(connection_pool=pool)
 
