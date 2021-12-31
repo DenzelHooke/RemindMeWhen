@@ -33,10 +33,10 @@ CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
 # Application definition
 
 INSTALLED_APPS = [
-    'account.apps.Accountos.environ.get',
-    'listings.apps.Listingsos.environ.get',
+    'account.apps.AccountConfig',
+    'listings.apps.ListingsConfig',
     'crispy_forms',
-    'layout.apps.Layoutos.environ.get',
+    'layout.apps.LayoutConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
