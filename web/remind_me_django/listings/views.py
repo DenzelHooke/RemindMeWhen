@@ -171,7 +171,7 @@ def listing_add(request):
                         prod_form, 
                         temp_ban_count_ttl
                     )
-                    messages.warning(request, f"As long as the scrape was succesful, please return back to this page within 15-20 seconds to view your product data.")
+                    messages.warning(request, f"Due to limitations on the backend, please refresh this page within 15-20 seconds to view your product.")
                     return redirect('listing-home-page')
 
     
