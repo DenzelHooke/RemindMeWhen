@@ -12,10 +12,18 @@ from itemadapter import ItemAdapter
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
+# If you ever get this error: 
+#   File "/app/python/lib/python3.8/site-packages/redis/connection.py", line 1304, in get_connection
+#     connection = self._available_connections.pop()
+# IndexError: pop from empty list
+# It's most likely because one of your redis env vars aren't correct. 
+REDIS_PASS = 'WpuQ60Fb6hE9OcBSZiSIOa32474294d'
+REDIS_HOST = 'redis-16583.c84.us-east-1-2.ec2.cloud.redislabs.com'
+REDIS_PORT = 16583
 pool = redis.ConnectionPool(
-    host=os.environ.get('REDIS_HOST'), 
-    password=os.environ.get('REDIS_PASS'), 
-    port=os.environ.get('REDIS_PORT'), 
+    host=REDIS_HOST, 
+    password=REDIS_PASS, 
+    port=REDIS_PORT , 
     db=0
     )
 r = redis.Redis(connection_pool=pool)

@@ -139,6 +139,7 @@ green 00C49A
     }
     
     .btn-wrapper{
+        margin-top: 30px;
         display: grid;
         grid-template-columns: 1fr 20px 0.2fr 1fr;
         grid-template-rows: 1fr;
