@@ -1,7 +1,7 @@
 import time
 import logging
 import os
-
+import re
 import json
 import redis
 from decouple import config
@@ -171,12 +171,12 @@ def listing_add(request):
                         prod_form, 
                         temp_ban_count_ttl
                     )
-                    messages.warning(request, f"Due to limitations on the backend, please refresh this page within 15-20 seconds to view your product.")
+                    messages.warning(request, f"We are now attempting to grab your product data. Please refresh this page within 30 seconds to see your newly tracked product. If you don't see your product listed within one minute, then the extraction was unsuccesful.")
                     return redirect('listing-home-page')
 
     
     product_form = ProductCreationForm()
-    template = "listings/listing_landing.html"
+    template = "listings/listing_add.html"
     
     context['sidebar'] = True
     context['form'] = product_form

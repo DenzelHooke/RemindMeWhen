@@ -1,0 +1,49 @@
+{% extends "layout/base.html" %}
+{% load static %}
+
+
+{% block styles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'listings/listing_add.css' %}"> 
+{% endblock %}
+
+{% block sidebar_content %}
+    <div id="scraper-form-card" class="content-section listing-form-card">
+        <form class='card-1' method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-5">Add a new Amazon product to track</legend>
+                {% for field in form.visible_fields %}
+                    <div class="field-container">
+                        <label class="form-label-dark bold">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </fieldset>
+            {% if temp_user_block %}
+                <div class="form-group">
+                    <button class="btn btn-danger" type="button">Temporaily disabled</button>
+                </div>
+            {%else%}
+                <div class="btn-track-group">
+                    <button class="track-btn btn-track btn" type="submit">TRACK</button>
+                </div>
+            {% endif %}
+        </form>
+    </div>
+    <div class="instructional card-1">
+        <div class="heading">
+            <h2>Getting started</h2>
+        </div>
+        <div class="desktop-instruction instruction">
+            <h2>Desktop</h2>
+            <img class="instruction-img" src="{% static 'listings/content/desktop_tut.gif' %}" alt="desktop tutorial" />
+        </div>
+        <div class="mobile-instruction instruction">
+            <h2>Mobile</h2>
+            <img class="instruction-img" src="{% static 'listings/content/mobile_tut.gif' %}" alt="mobile tutorial" />
+        </div>
+    </div>
+{% endblock %}
+{% block js %}
+    <script src="{% static 'listings/add_listing.js' %}"></script>
+{% endblock %}

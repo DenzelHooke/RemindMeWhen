@@ -22,16 +22,17 @@
 .sidebar-inner-wrapper{
     position: sticky;
     top: 0;
+    bottom: 0;
     /* Turns off flex-shrink that's set by default */
     flex-shrink: 0;
     width: var(--sidebar_width);
     background: var(--sidebar_bg);
-    height: calc(100vh - var(--navbar_height));
+    height: calc(100vh + var(--navbar_height));
     border-right: 1px solid rgb(224, 224, 224);
     overflow: hidden;
     transition: width 1s cubic-bezier(0.35, 0.68, 0.79, 0.9);
     z-index: 200;
-    /* overflow: hidden; */
+    overflow: hidden;
 }
 
 .sidebar-options{

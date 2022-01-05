@@ -352,6 +352,17 @@ input {
 .mobile-btn-sidebarOpen #mobile-sidebar-btn-line::after{
     transform: translateY(-5px) rotate(-40deg);
 }
+
+.light-green {
+    color:#46da68;
+}
+.angry-red {
+    color:#ee3029;
+}
+.light-blue {
+    color:#4db6f3;
+}
+
 /* MOBILE VIEW */
 
 @media  screen and (max-width: 950px) {    

@@ -1,0 +1,149 @@
+/* Gave this a display:flexbox so both elements can be "inline" with each other. (rows)*/
+
+.profile-info{
+    padding: 45px;
+    margin: 0 auto;
+    flex-basis: 1200px;
+}
+
+/* Bio input field */
+#id_bio{
+    max-width: 50rem;
+    max-height: 200px;
+}
+
+.profile-forms{
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.profile-forms .form-group:last-child{
+    display: flex;
+    justify-content: center;
+}
+
+.profile-forms .form-group:last-child button{
+    background: var(--navbar_bg);
+    color: var(--button_font_color);
+    border: none;
+    transition: all 500ms ease-in-out;
+    transition: width 500ms ease-in-out;
+    
+}
+
+.profile-forms .form-group:last-child button:hover{
+    background: var(--button_bg);
+    border: none;
+    width: 150px;
+}
+
+.profile-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 400px auto;
+    gap: 10px;
+    transition: all;
+}
+
+.media-wrap{
+    display: flex;
+    margin: 0 auto;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.media-wrap img{
+    display: block;
+    margin: 15px auto;
+    object-fit: cover;
+    width: 100%;
+    height: 200px;
+}
+
+.media-wrap p{
+    margin: 10px 0;
+    text-align: center;
+    overflow: auto;
+}
+
+.media-wrap p:nth-child(2){
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.hide{
+    display: none;
+}
+
+
+/* Profile column switch */
+@media screen and (max-width: 1000px){
+    .profile-grid{
+        grid-template-columns: 1fr 400px 1fr;
+        grid-template-rows: auto auto;
+        gap: 10px
+    }
+
+    .profile-forms{
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    #profile-pic-card{
+        grid-column: 2;
+        padding: 10px;
+    }
+
+    #profile-pic-card img{
+        align-self: center;
+        order: 2;
+        margin: 0;
+        height: 100px;
+        width: 100px;
+        border-radius: 100px;
+        object-fit: fill;
+    }
+
+    #about-me{
+        order: 1;
+    }
+
+    #profile-bio{
+        order: 3;
+        margin-bottom: 20px;
+    }
+}
+
+/* Small Mobile */
+@media screen and (max-width: 550px){
+    .profile-grid{
+        grid-template-columns: 1fr 150px 1fr;
+        grid-template-rows: auto auto;
+        gap: 25px;
+    }
+
+    #profile-pic-card{
+        grid-column: 1 / -1;
+        border-radius: 80px;
+        padding: 0;
+        box-shadow: none    ;
+    }
+    
+    #profile-pic-card img{
+        order: 1;
+        align-self: flex-start;
+        height: 150px;
+        width: 150px;
+        margin: 0;
+    }
+
+    .profile-info{
+        padding: 45px 18px 45px;
+    }
+    .profile-forms{
+        box-shadow: none;
+        border-radius: 0;
+        padding: 2px;
+
+    }
+}

@@ -15,7 +15,7 @@
                         <div class="product-options">
                             <li id="inner-card-name" class="inner-card-li"><a href={{ product.url }}>{{ product.name }}</a></li>
                             <li id="inner-card-price" class="inner-card-li"> ${{ product.price }} CAD</li>
-                            <li id="inner-card-added-on" class="inner-card-li">Added on {{ product.date_added }}</li>
+                            <li id="inner-card-added-on" class="inner-card-li">Added on {{ product.date_added|date:"Y-m-d H:i:s" }}</li>
                         </div>
                     </ul>
 
@@ -59,5 +59,9 @@
             {% endif %}
         </div>
     </ul>
-        
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'listings/listings.js' %}"></script>
 {% endblock %}

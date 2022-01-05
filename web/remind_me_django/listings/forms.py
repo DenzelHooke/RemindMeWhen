@@ -13,9 +13,9 @@ class ProductCreationForm(forms.ModelForm):
         fields = ['name', 'url']
 
         widgets = {
-            'name': TextInput(attrs={'placeholder':'Optional product name', 'class':"input-field"}
+            'name': TextInput(attrs={'placeholder':'Optional product name', 'class':"input-field", 'id': "name-field"}
             ),
-            'url': URLInput(attrs={'placeholder':'Enter an Amazon.com or Amazon.ca URL', 'class':"input-field"}
+            'url': URLInput(attrs={'placeholder':'Enter an Amazon.com or Amazon.ca URL', 'class':"input-field shadow-none", 'id': "url-field", }
             )
         }
 

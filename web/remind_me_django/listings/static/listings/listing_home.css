@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     padding: 3px;
-    max-width: 600px;
+    width: 600px;
     margin: 0 auto;
     margin-top: 40px;
     list-style: none;
@@ -46,10 +46,13 @@
 
 #inner-card-name{
     font-size: 35px;
-    border-bottom: 3px solid rgba(163, 163, 163, 0.158);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.158);
     margin-bottom: 10px
 }
 
+#inner-card-name a {
+    text-decoration: underline;
+}
 @media  screen and (max-width: 800px) {
     .product-container {
         max-width: none;
