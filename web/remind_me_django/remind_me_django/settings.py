@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG')
+DEBUG = False
 # DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
@@ -194,9 +194,9 @@ AWS_LOCATION = 'static'
 STATC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
 # REDIS
-REDIS_HOST = ('REDIS_HOST')
-REDIS_PORT = ('REDIS_PORT')
-REDIS_PASS = ('REDIS_PASS')
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT')
+REDIS_PASS = os.environ.get('REDIS_PASS')
 
 # Scrapinghub
 SCRAPING_HUB_API = os .environ.get('SCRAPING_HUB_API')
