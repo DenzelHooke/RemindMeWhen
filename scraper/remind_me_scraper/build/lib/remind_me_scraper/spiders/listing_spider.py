@@ -58,7 +58,8 @@ class ListingsSpider(scrapy.Spider):
     
     def parse(self, response):
         # div#dp-container
-        page = response.css("div#ppd")
+        # page = response.css("div#ppd")
+        page = response.css("div#dp-container")
         loader = ProductLoader(item=ProductItem(), selector=page)
 
         print(page)

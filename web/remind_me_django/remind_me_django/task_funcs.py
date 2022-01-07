@@ -26,6 +26,7 @@ class ScraperUtilz:
             self.scrapyd_api_url = 'http://scrapy:8080'                  
             self._scrapyd_api = ScrapydAPI(ScraperUtilz.scrapyd_api_url)
         elif state == 'production':
+            
             self.__client = ScrapinghubClient(SCRAPING_HUB_API)
             self.__project = self.__client.get_project(SCRAPING_HUB_PROJECT)
 
@@ -153,7 +154,7 @@ class ScraperUtilz:
         if limit:
             time_limit = limit
         else:
-            time_limit = 35
+            time_limit = 120
 
         while not flag:
             if state == 'dev':

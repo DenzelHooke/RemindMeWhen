@@ -23,20 +23,20 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 # DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS')
-CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS')
+CELERY_BROKER_URL = config('CELERY_BROKER_URL')
 
 # Application definition
 
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'listings.apps.ListingsConfig',
-    'crispy_forms',
+    # 'crispy_forms',
     'layout.apps.LayoutConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -87,11 +87,11 @@ DATABASES = {
 
         'ENGINE': 'django.db.backends.postgresql',
 
-        'NAME': os.environ.get('DB_USER'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': os.environ.get('DB_HOST'),
-        'PORT': os.environ.get('DB_PORT'),
+        'NAME': config('DB_USER'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASS'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
    } 
     
 }
@@ -141,21 +141,21 @@ STATIC_URL = '/static/'
 # This is the location where django will put static files once we run collectstatic.
 # Comment out when developing
 # https://stackoverflow.com/questions/30350045/is-manage-py-collectstatic-needed-on-each-edit-of-static-file
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Alternative diirectories we can tell django to look in for static files.
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+# CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Redirect user to this view once they login
-LOGIN_REDIRECT_URL = 'profile-page'
+LOGIN_REDIRECT_URL = 'listing-add-page'
 
 # Redirect user to this view if they try to access a page and aren't logged in 
 LOGIN_URL = 'login-required'
@@ -182,11 +182,11 @@ EMAIL_HOST_PASSWORD = os.environ.get('APP_PASSWORD')
 # Boto 3
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-# # AWS
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_DEFAULT_ACL = os.environ.get('AWS_DEFAULT_ACL')
+# AWS
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = config('AWS_DEFAULT_ACL')
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age-86400'}
 # A path prefix that will be preprended to all uploads
@@ -194,10 +194,10 @@ AWS_LOCATION = 'static'
 STATC_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
 
 # REDIS
-REDIS_HOST = os.environ.get('REDIS_HOST')
-REDIS_PORT = os.environ.get('REDIS_PORT')
-REDIS_PASS = os.environ.get('REDIS_PASS')
+REDIS_HOST = config('REDIS_HOST')
+REDIS_PORT = config('REDIS_PORT')
+REDIS_PASS = config('REDIS_PASS')
 
 # Scrapinghub
-SCRAPING_HUB_API = os .environ.get('SCRAPING_HUB_API')
-SCRAPING_HUB_PROJECT = os .environ.get('SCRAPING_HUB_PROJECT')
+SCRAPING_HUB_API = config('SCRAPING_HUB_API')
+SCRAPING_HUB_PROJECT = config('SCRAPING_HUB_PROJECT')
