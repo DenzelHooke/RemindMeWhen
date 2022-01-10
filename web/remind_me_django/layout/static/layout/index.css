@@ -101,6 +101,10 @@ green 00C49A
     font-size: 20px;
 }
 
+.hero-item ul {
+    list-style-type: "- ";
+}
+
 .hero-item li {
     font-size: 30px;
 }

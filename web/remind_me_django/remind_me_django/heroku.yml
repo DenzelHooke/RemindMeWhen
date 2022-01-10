@@ -1,0 +1,8 @@
+build:
+  docker:
+    web: Dockerfile.web
+  docker: 
+    celery: Dockerfile.celery
+run:
+  celery: celery -A remind_me_django worker -E --without-heartbeat --without-gossip --without-mingle -l info -B
+  web: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT

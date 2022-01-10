@@ -28,6 +28,6 @@ const check_field = function(event) {
   }
 };
 
-url_field.addEventListener('change', check_field)
+url_field.addEventListener('input', check_field)
 console.log(product_dates);
 

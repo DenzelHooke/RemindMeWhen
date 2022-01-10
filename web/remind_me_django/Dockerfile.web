@@ -13,4 +13,4 @@ RUN pip install psycopg2-binary
 RUN ["apt-get", "update"]
 RUN ["apt-get", "install", "-y", "nano"]
 
-CMD gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT
+# CMD gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT
