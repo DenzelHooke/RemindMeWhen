@@ -1,0 +1,12 @@
+build:
+  docker:
+    web: ./web/remind_me_django/Dockerfile.web
+  docker: 
+    celery: ./web/remind_me_django/Dockerfile.celery
+release:
+    image: web
+    command:
+        - python manage.py collectstatic --noinput
+run:
+  celery: celery -A remind_me_django worker -E --without-heartbeat --without-gossip --without-mingle -l info -B
+  web: gunicorn remind_me_django.wsgi:application  --bind 0.0.0.0:$PORT
