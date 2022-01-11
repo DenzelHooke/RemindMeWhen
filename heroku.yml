@@ -1,8 +1,8 @@
 build:
   docker:
-    web: ./web/remind_me_django/Dockerfile.web
+    web: .\web\remind_me_django\Dockerfile.web
   docker: 
-    celery: ./web/remind_me_django/Dockerfile.celery
+    celery: .\web\remind_me_django\Dockerfile.celery
 release:
     image: web
     command:
