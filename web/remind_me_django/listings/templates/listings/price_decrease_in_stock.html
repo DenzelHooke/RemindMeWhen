@@ -1,0 +1,26 @@
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" type="text/css" href="{% static 'price_decrease_email.css' %}">
+<title>Price Decrease</title>
+{% endblock %}
+
+{% block content %}
+  <div class="price-diff padding">
+    <h3>
+      {{product.name}} has decreased in price by <span class="diff__value">${{price_diff}} CAD</span> and is now back in stock!
+    </h3>
+  </div>
+  <div id="border"></div>
+  <br>
+  <p>
+    <h4 class="old__price padding prices">Old price: <span class="value_padding">${{old_price}} CAD</span></h4>
+    <h4 class="new__price padding prices">
+      Updated price: <span class="value_padding">${{new_price}} CAD</span>
+    </h4>
+    <h4 class="padding">
+      Here is your product page:
+      <a href="{{product.url}}">{{product.name}}</a>
+    </h4>
+  </p>
+{% endblock %}

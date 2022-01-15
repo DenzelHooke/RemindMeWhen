@@ -43,7 +43,7 @@ app = Celery('remind_me_django')
 
 # 5 min
 time_to_run = 300
-minute_to_check = 60
+minute_to_check = 5
 # time_to_check = timedelta(minutes=5).total_seconds
 
 
@@ -138,12 +138,13 @@ def check_for_updates():
                     
                     # If new_price doesn't match up with current price and it's in stockl. Most common outcome.
                     if new_prod_price != old_prod_price and new_product_data['stock']:
-                        
+                        print('Product is in stock and price has changed')
+
                         # Updated current product price with new price
                         product.price = new_prod_price
                         product.last_updated = current_time
+                        product.stock = True
                         product.save()
-
                         # Calculate price difference
                         price_diff = product_email.price_diff
 
@@ -178,35 +179,35 @@ def check_for_updates():
                         # # Prod is unavailable
                         # if new_prod_price == 0:
                         #     product_email.send_out_of_stock_email()
-                            
+                        print('Product is out of stock and price has changed')
                         product.price = new_product_data['price']
-
                         # Else if product was in stock before the scrape but it's now out of stock.
                         if product.stock:
                             product_email.send_out_of_stock_email()
-                    
+
                         product.stock = False
                         update_prod_last_updated(product, current_time)
-        
-                    #  If not in stock
+
                     elif not new_product_data['stock']:
+                        print('Product is out of stock.')
                         #If the scrapped product was already out of stock, do nothing
                         if not product.stock:
                             pass
                         else:
-                            product.stock = new_product_data['stock']
+                            product.stock = False
                             product_email.send_out_of_stock_email()
                             update_prod_last_updated(product, current_time)
                     
                     # If in stock
                     elif new_product_data['stock']:
+                        print('Product is in stock.')
                         #If the scrapped product was already in stock, do nothing
                         if product.stock:
                             pass
                         else:
-                            product.stock = new_product_data['stock']
-                            product_email.send_in_stock_email()
+                            product.stock = True
                             update_prod_last_updated(product, current_time)
+                            product_email.send_in_stock_email()
 
 
                     utc_now_last_checked = pytz.utc.localize(dt.utcnow())

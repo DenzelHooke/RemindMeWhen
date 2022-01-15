@@ -1,0 +1,17 @@
+{% extends "listings/template_base.html" %}
+
+{% block content %}
+  <div class="price-diff padding">
+    <h3>
+      {{product.name}} is now unfortunately out of stock.
+    </h3>
+  </div>
+  <div id="border"></div>
+  <br>
+  <p>
+    <h4 class="padding">
+      Here is your product page:
+      <a href="{{product.url}}">{{product.name}}</a>
+    </h4>
+  </p>
+{% endblock %}

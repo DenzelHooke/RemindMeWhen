@@ -163,6 +163,7 @@ class ScraperUtilz:
                 job_status = self.scrapinghub_get_job_status()
             if job_status != "finished":
                 print(f"Job status: {job_status}")
+                # Loop until the jobs status changes, exit the loop and keep this process going *until or if* we hit the job status "finished".
                 while True:
                     time.sleep(time_to_poll)
                     count +=1
@@ -174,11 +175,9 @@ class ScraperUtilz:
                     if state == 'dev':
                         if job_status != self._scrapyd_api.job_status(self._project_name, self.__job_id):
                             break
-                    elif state == 'prod':
+                    elif state == 'production':
                         if job_status != self.scrapinghub_get_job_status():
                             break
-                        
-
             else:
                 print(f"--Job status: {job_status}!--")
                 break

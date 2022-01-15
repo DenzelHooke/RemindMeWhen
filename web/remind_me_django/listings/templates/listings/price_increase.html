@@ -1,0 +1,22 @@
+{% extends "listings/template_base.html" %}
+
+{% block content %}
+  <h4 class="padding">This is an alert from Remind Me When.</h4>
+  <div class="price-diff padding">
+    <h3>
+      {{product.name}} has increased in price by <span class="diff__value">${{price_diff}} CAD</span>
+    </h3>
+  </div>
+  <div id="border"></div>
+  <br>
+  <p>
+    <h4 class="new__price padding prices">Old price: <span class="value_padding">${{old_price}} CAD</span></h4>
+    <h4 class="old__price padding prices">
+      Updated price: <span class="value_padding">${{new_price}} CAD</span>
+    </h4>
+    <h4 class="padding">
+      Here is your product page:
+      <a href="{{product.url}}">{{product.name}}</a>
+    </h4>
+  </p>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="{% static 'listings/email_base_styles.css' %}">
+  {% block styles %}
+  {% endblock %}
+</head>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,100&family=Mitr:wght@200;300;400;500&family=Montserrat:wght@500;700&family=Roboto:wght@300;400;500;900&display=swap');
+
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: Lato, sans-serif;
+}
+
+:root {
+  --font-color: rgb(31, 31, 31);
+}
+
+p, h1, h2, h3, h4{
+  color: rgb(29, 29, 29);
+}
+
+
+.padding {
+  padding: 18px;
+}
+
+.value_padding {
+  padding: 4px;
+  border-radius: 3px;
+}
+
+.prices {
+  color: rgb(56, 56, 56);
+  font-size: 20px;
+}
+
+#header {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+  justify-content: center;
+  align-items: center;
+  background: #333333;
+  margin-bottom: 45px;
+}
+
+#header > * {
+  color: #fff;
+  font-size: 32px;
+}
+
+.outer-con
+
+.inner-container {
+  padding: 10px;
+  border: 1px solid rgb(0, 0, 0);
+}
+.inner-containerr h3 {
+  color: rgb(255, 255, 255);
+}
+
+.old__price {
+  color: rgb(42, 42, 42);
+  margin-bottom: 10px;
+}
+
+.old__price span {
+  background: rgb(236, 63, 63);
+}
+.new__price {
+  color: rgb(32, 32, 32);
+}
+.new__price span{
+  background: rgb(96, 231, 91);
+}
+
+.price-diff {
+  padding-bottom: 10px;
+  padding: 18px;
+  /* border-bottom: 5px  solid rgba(0, 0, 0, 0.45922); */
+}
+
+.price-diff::after {
+  margin-top: 20px;
+  content: '';
+  display: block;
+  background: rgba(0, 0, 0, 0.45922);
+  height: 3px;
+}
+
+.price-diff h3 {
+  line-height: 35px;
+}
+
+.price-diff .diff__value {
+  color: rgb(96, 231, 91);
+  padding: 10px;
+  border-radius: 20px;
+  background: rgb(44, 44, 44);
+} 
+@media screen and (min-width: 800px) {
+  
+}
+</style>
+<body>
+  <body>
+    <header id="header"><h1>REMIND ME</h1><h2>ALERT</h2></header>
+  
+    <div class="outer-container">
+      <div class="inner-container">
+        <h4 class="padding">This is an alert from Remind Me When.</h4>
+        {% block content %}
+        {% endblock %}
+      </div>
+    </div>
+  </body>
+</body>
+</html>
