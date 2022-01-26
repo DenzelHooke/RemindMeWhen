@@ -43,7 +43,7 @@ app = Celery('remind_me_django')
 
 # 5 min
 time_to_run = 300
-minute_to_check = 5
+minute_to_check = 60
 # time_to_check = timedelta(minutes=5).total_seconds
 
 

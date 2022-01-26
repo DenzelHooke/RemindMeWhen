@@ -86,36 +86,6 @@ def user_slowdown_detected(slowdown, request, initial_ttl):
     else:
         messages.warning(request, f"Please try again shortly in {int(time_until_avail)} seconds.")
 
-def manage_temp_ban(user, temp_ban_count_ttl):
-    """Creates or incrmenets a temp ban for the user. 
-
-    Args:
-        user (user object): Django lazy user object.
-        temp_ban_count_ttl (int): An int that represents the amount of time a temp ban should last.
-    """
-    utc_now = pytz.utc.localize(dt.utcnow())
-    user_error_count = r.get(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
-    logging.debug(user_error_count)
-    if not user_error_count:
-        # If not, create a key with a value of 1 (initial error)
-        logging.debug("user error count SET")
-
-        r.setex(
-        f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}", 
-        temp_ban_count_ttl, 
-        1)
-    else:
-        # If it already exists, get the current ttl, create a new key with the old key's ttl but increment the error count by 1
-
-        logging.debug("user error count ADDED")
-        count_ttl = r.ttl(f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}")
-        if count_ttl:
-            r.setex(
-            f"MANUAL_SCRAPE_ERROR_COUNT-{user.email}",
-            count_ttl,
-            int(user_error_count)+1)
-# Put functions within a different utility file.
-
 @login_required
 def listing_add(request):
     """ 

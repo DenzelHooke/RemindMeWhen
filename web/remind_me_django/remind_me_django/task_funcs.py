@@ -166,7 +166,9 @@ class ScraperUtilz:
                 # Loop until the jobs status changes, exit the loop and keep this process going *until or if* we hit the job status "finished".
                 while True:
                     time.sleep(time_to_poll)
-                    count +=1
+                    # Only add one to the count limit once the spider starts to handle the request.
+                    if job_status != "pending":
+                        count +=1
                     
                     if count >= time_limit:
                         flag = True

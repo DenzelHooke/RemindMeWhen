@@ -63,6 +63,7 @@ def create_product(user_email, product_form, temp_ban_count_ttl):
 
     print('bg task ran')
     scraper.scrapinghub_first_run(user_email, product_form)
+    # Polls until job is finished or if it fails.
     scraper.wait_till_finished(state="production")
     try: 
         prod = json.loads(r.get(scraper.uuid))
@@ -72,6 +73,6 @@ def create_product(user_email, product_form, temp_ban_count_ttl):
             price=prod['price'],
             stock=prod['stock'],
             url=prod['url']
-            )
+        )
     except TypeError:
         manage_temp_ban(user_email, temp_ban_count_ttl)
